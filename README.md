@@ -1,6 +1,6 @@
 # Cryptobot
 
-Cryptocurrency trading bot.
+:moneybag: :robot: Cryptocurrency trading bot for multiple platforms and coins (gdax/coinbase & dollar/bitcoin/ethereum/litecoin)
 
 This is a multi-currency trading bot. It's primary purpose was to automate trading cryptocurrency, however it can be use to trade forex, stocks and index funds once you made the API integration.
 
@@ -20,3 +20,15 @@ This strategy applies for everything. However, it is specially useful when tradi
 
 Again there is a lot to choose from. So this bot uses a combination of multiple ones to give you the best results for your strategy.
 
+# Notes
+
+- CLI tool that runs in the background
+- produces logs and also has a command colored logs stdout
+- unit test for all functions
+- every function is documented
+- integration test to test strategies with real market data
+- try to avoid takers side (market orders) and favor makers side (limit and stop orders)
+
+# Questions
+
+- How's price set on the market? If somebody set a sell price that is in the range of a buy order do both get matched even if the current market price hasn't reach that yet?
