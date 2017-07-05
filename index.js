@@ -90,12 +90,12 @@ var publicClient = new Gdax.PublicClient(productID, endpoint);
 // publicClient.getProductTicker(callback);
 
 // Real-time ticks
-// var websocket = new Gdax.WebsocketClient(['BTC-USD']);
-// websocket.on('message', function (d) {
-//   if(d.type === 'match') {
-//     console.log(`${d.product_id} ${d.sequence}: ${d.price} (${d.type})`);
-//   }
-// });
+var websocket = new Gdax.WebsocketClient(['BTC-USD']);
+websocket.on('message', function (d) {
+  if(d.type === 'match') {
+    console.log(`${d.product_id} ${d.sequence}: ${d.price} (${d.type})`);
+  }
+});
 /*
 { type: 'match',
   trade_id: 17499723,
