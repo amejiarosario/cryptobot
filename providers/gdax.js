@@ -15,12 +15,17 @@ function onMatches(callback, products = ['BTC-USD']) {
 
   websocket.on('message', function (d) {
     if (d.type === 'match') {
-      callback(`${d.product_id} ${d.time}: ${d.price} ${d.size} (${d.type})`);
+      callback(`${d.product_id} ${d.time}: ${d.price} x ${d.size} (${d.type}.${d.side})`);
     }
   });  
 }
 
+function getOrders(callback) {
+  authedClient.getOrders((err, res, data) => callback(data));  
+}
+
 module.exports = {
   authedClient,
-  onMatches
+  onMatches,
+  getOrders
 };
