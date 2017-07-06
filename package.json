@@ -4,7 +4,8 @@
   "description": "Cryptocurrency trading bot",
   "main": "index.js",
   "dependencies": {
-    "gdax": "0.4.2"
+    "gdax": "0.4.2",
+    "mongodb": "2.2.29"
   },
   "devDependencies": {},
   "scripts": {

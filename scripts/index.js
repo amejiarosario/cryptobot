@@ -7,18 +7,18 @@ const callback = (error, response, data) => console.log(response.statusCode, dat
 
 // ---------------
 
-const key = process.env.GDAX_ID;
+const key = process.env.GDAX_KEY;
 const b64secret = process.env.GDAX_SECRET;
 const passphrase = process.env.GDAX_PASSPHRASE;
 const apiURI = 'https://api.gdax.com';
 
 var authedClient = new Gdax.AuthenticatedClient(key, b64secret, passphrase, apiURI);
-authedClient.getAccounts(callback);
+// authedClient.getAccounts(callback);
 
 // const usdAccount = '328cbc77-321c-44c9-9e30-cea1f8248d85';
 // authedClient.getAccountHolds(usdAccount, callback);
 
-authedClient.getOrders(callback);
+// authedClient.getOrders(callback);
 /*
 [ { id: '15f9e760-5bb0-4927-ba63-7925fbbdec87',
     price: '2000.00000000',
@@ -90,12 +90,12 @@ var publicClient = new Gdax.PublicClient(productID, endpoint);
 // publicClient.getProductTicker(callback);
 
 // Real-time ticks
-var websocket = new Gdax.WebsocketClient(['BTC-USD']);
-websocket.on('message', function (d) {
-  if(d.type === 'match') {
-    console.log(`${d.product_id} ${d.sequence}: ${d.price} (${d.type})`);
-  }
-});
+// var websocket = new Gdax.WebsocketClient(['BTC-USD']);
+// websocket.on('message', function (d) {
+//   if(d.type === 'match') {
+//     console.log(`${d.product_id} ${d.sequence}: ${d.price} (${d.type})`);
+//   }
+// });
 /*
 { type: 'match',
   trade_id: 17499723,
@@ -111,7 +111,7 @@ websocket.on('message', function (d) {
 */
 
 // Rates history
-// publicClient.getProductHistoricRates((e, r, d) => console.log(d.slice(0, 10), d.length, d));
+publicClient.getProductHistoricRates((e, r, d) => console.log(d.slice(0, 10), d.length, d));
 // publicClient.getProductHistoricRates({ 'granularity': 1, 
 //   start: (new Date(1498601940 * 1000)).toISOString(), 
 //   end: (new Date(1498602120 * 1000)).toISOString() }, (e, r, d) => console.log(e, r.statusCode, d.length, d));
@@ -121,6 +121,15 @@ websocket.on('message', function (d) {
 //   start: (new Date(1498601940 * 1000)).toISOString(),
 //   end: (new Date(1498602120 * 1000)).toISOString()
 // }, (e, r, d) => console.log(e, r.statusCode, d.length, d));  
+
+// [
+//   [time, low, high, open, close, volume],
+//   [1415398768, 0.32, 4.2, 0.35, 4.2, 12.3],
+//   ...
+// ]
+
+
+
 
 // Market depth
 // publicClient.getProductOrderBook(callback);
