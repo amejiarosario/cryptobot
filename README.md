@@ -32,3 +32,14 @@ Again there is a lot to choose from. So this bot uses a combination of multiple 
 # Questions
 
 - How's price set on the market? If somebody set a sell price that is in the range of a buy order do both get matched even if the current market price hasn't reach that yet?
+
+
+# Dependencies
+
+```
+npm install pm2 -g
+
+pm2 start --name="ticker" ./cli.js -- ticker
+pm2 ls
+pm2 stop
+```

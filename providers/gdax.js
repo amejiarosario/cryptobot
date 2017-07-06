@@ -10,14 +10,12 @@ const authedClient = new Gdax.AuthenticatedClient(
   config.gdax.api
 );
 
-function onMatches(callback, products = ['BTC-USD']) {
+function ticker(callback, products = ['BTC-USD']) {
   const websocket = new Gdax.WebsocketClient(products);
-
-  websocket.on('message', function (d) {
-    if (d.type === 'match') {
-      callback(`${d.product_id} ${d.time}: ${d.price} x ${d.size} (${d.type}.${d.side})`);
-    }
-  });  
+  websocket.on('open', () => console.info(`Listening for ${products.join(', ')} on GDAX`));
+  websocket.on('message', callback);
+  websocket.on('error', (e) => console.error(e));
+  websocket.on('close', () => console.info(`Stopped listeing for ${products.join(', ')} on GDAX`));
 }
 
 function getOrders(callback) {
@@ -26,6 +24,6 @@ function getOrders(callback) {
 
 module.exports = {
   authedClient,
-  onMatches,
+  ticker,
   getOrders
 };
