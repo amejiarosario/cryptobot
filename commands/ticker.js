@@ -6,7 +6,11 @@ const db = require('../db');
 function ticker(options) {
   let last, color = chalk.yellow;
 
+  console.error('Testing error message');
+
   db.connect((err, dbi) => {
+    if(err) console.error(err);
+
     const collection = dbi.collection(`btc-usd-ticker`);
 
     gdax.ticker((data) => {

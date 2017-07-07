@@ -2,7 +2,7 @@
   "name": "cryptobot",
   "version": "1.0.0",
   "description": "Cryptocurrency trading bot",
-  "main": "index.js",
+  "main": "cli.js",
   "dependencies": {
     "gdax": "0.4.2",
     "mongodb": "2.2.29"
