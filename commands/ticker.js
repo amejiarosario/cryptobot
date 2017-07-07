@@ -9,7 +9,7 @@ function ticker(options) {
   console.error('Testing error message');
 
   db.connect((err, dbi) => {
-    if(err) console.error(err);
+    if(err) console.error('ERROR connecting to database. ', err);
 
     const collection = dbi.collection(`btc-usd-ticker`);
 
@@ -29,7 +29,7 @@ function ticker(options) {
           size: +data.size,
           side: data.side
         }, (err, d) => {
-          if(err) console.error(err);
+          if(err) console.error('ERROR inserting document', err);
         });
 
         last = current;
