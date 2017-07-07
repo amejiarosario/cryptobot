@@ -10,5 +10,6 @@ module.exports = {
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || '27017',
     name: process.env.DB_NAME || 'localbot2',
+    uri: process.env.MONGODB_URI || process.env.DB_URI || 'mongodb://localhost:27017/localbot2'
   }
 }
