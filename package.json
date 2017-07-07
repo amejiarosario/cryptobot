@@ -10,9 +10,12 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./index.js"
+    "start": "node ./cli.js ticker"
   },
   "keywords": [],
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": "8.1.2"
+  }  
 }
