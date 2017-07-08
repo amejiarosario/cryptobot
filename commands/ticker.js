@@ -6,17 +6,18 @@ const db = require('../db');
 function ticker(options) {
   let last, sequence, color = chalk.yellow;
 
-  console.error('Testing error message');
+  console.warn('Testing error message');
 
   db.connect((err, dbi) => {
-    if(err) console.error('ERROR connecting to database. ', err);
+    if(err) console.warn('ERROR connecting to database. ', err);
+    console.log(`Connected correctly to server: ${dbi.serverConfig.host}:${dbi.serverConfig.port}/${dbi.databaseName}`);   
 
     const collection = dbi.collection(`btc-usd-ticker`);
 
     gdax.ticker((data) => {
       // check sequence
       if (sequence && sequence !== (+data.sequence - 1) ) {
-        console.error(`ERROR sequence ${sequence} didn't match data.sequence ${data.sequence} `);
+        console.warn(`ERROR sequence ${sequence} didn't match data.sequence ${data.sequence} `);
       }
 
       sequence = data.sequence;
@@ -36,7 +37,7 @@ function ticker(options) {
           size: +data.size,
           side: data.side
         }, (err, d) => {
-          if(err) console.error('ERROR inserting document', err);
+          if(err) console.warn('ERROR inserting document', err);
         });
 
         last = current;

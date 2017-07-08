@@ -14,7 +14,7 @@ function ticker(callback, products = ['BTC-USD']) {
   const websocket = new Gdax.WebsocketClient(products);
   websocket.on('open', () => console.info(`Listening for ${products.join(', ')} on GDAX`));
   websocket.on('message', callback);
-  websocket.on('error', (e) => console.error('ERROR websocket: ', e));
+  websocket.on('error', (e) => console.warn('ERROR websocket: ', e));
   websocket.on('close', () => {
     console.warn(`Stopped listening for ${products.join(', ')} on GDAX`);
     console.info(`Retrying connection ${products} in 10s`);

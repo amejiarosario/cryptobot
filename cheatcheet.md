@@ -27,9 +27,9 @@ heroku ps -a crybot
 # unlimited free login
 heroku addons:create logdna:quaco
 
-# enabling metrics on logs
-heroku labs:enable log-runtime-metrics # no good
-heroku restart
+# best logs
+heroku addons:open logdna
+
 
 # get data backup
 mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o btc-usd-ticker.json
@@ -42,3 +42,10 @@ mongoimport -h localhost:27017 -d localbot2 -c btc-usd-ticker --file btc-usd-tic
 
 http://givemethechills.com/how-to-migrate-a-node-js-app-from-heroku-to-openshift/
 
+# Archive
+
+```s
+# enabling metrics on logs
+heroku labs:enable log-runtime-metrics # no good
+heroku restart
+```
