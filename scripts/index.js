@@ -3,7 +3,7 @@
 // https://docs.gdax.com/#get-currencies
 // https://github.com/coinbase/gdax-node
 const Gdax = require('gdax');
-const callback = (error, response, data) => console.log(response.statusCode, data, error, "\r\n------------\r\n");
+const callback = require('../commands/util');
 
 // ---------------
 
@@ -18,7 +18,7 @@ var authedClient = new Gdax.AuthenticatedClient(key, b64secret, passphrase, apiU
 // const usdAccount = '328cbc77-321c-44c9-9e30-cea1f8248d85';
 // authedClient.getAccountHolds(usdAccount, callback);
 
-// authedClient.getOrders(callback);
+authedClient.getOrders(callback);
 /*
 [ { id: '15f9e760-5bb0-4927-ba63-7925fbbdec87',
     price: '2000.00000000',
@@ -111,7 +111,7 @@ var publicClient = new Gdax.PublicClient(productID, endpoint);
 */
 
 // Rates history
-publicClient.getProductHistoricRates((e, r, d) => console.log(d.slice(0, 10), d.length, d));
+// publicClient.getProductHistoricRates((e, r, d) => console.log(d.slice(0, 10), d.length, d));
 // publicClient.getProductHistoricRates({ 'granularity': 1, 
 //   start: (new Date(1498601940 * 1000)).toISOString(), 
 //   end: (new Date(1498602120 * 1000)).toISOString() }, (e, r, d) => console.log(e, r.statusCode, d.length, d));

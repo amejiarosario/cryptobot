@@ -1,12 +1,10 @@
 const chalk = require('chalk');
 
-const gdax = require('../providers/gdax');
+const gdax = require('./gdax');
 const db = require('../db');
 
 function ticker(options) {
   let last, sequence, color = chalk.yellow;
-
-  console.warn('Testing error message');
 
   db.connect((err, dbi) => {
     if(err) console.warn('ERROR connecting to database. ', err);
