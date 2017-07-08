@@ -24,8 +24,11 @@ heroku logs -t
 # free hours left
 heroku ps -a crybot
 
+# unlimited free login
+heroku addons:create logdna:quaco
+
 # enabling metrics on logs
-heroku labs:enable log-runtime-metrics
+heroku labs:enable log-runtime-metrics # no good
 heroku restart
 
 # get data backup

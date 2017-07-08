@@ -15,7 +15,11 @@ function ticker(callback, products = ['BTC-USD']) {
   websocket.on('open', () => console.info(`Listening for ${products.join(', ')} on GDAX`));
   websocket.on('message', callback);
   websocket.on('error', (e) => console.error('ERROR websocket: ', e));
-  websocket.on('close', () => console.info(`Stopped listeing for ${products.join(', ')} on GDAX`));
+  websocket.on('close', () => {
+    console.warn(`Stopped listening for ${products.join(', ')} on GDAX`);
+    console.info(`Retrying connection ${products} in 10s`);
+    setTimeout(() => ticker(callback, products), 10e3);
+  });
 }
 
 function getOrders(callback) {

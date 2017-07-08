@@ -4,7 +4,7 @@ const gdax = require('../providers/gdax');
 const db = require('../db');
 
 function ticker(options) {
-  let last, color = chalk.yellow;
+  let last, sequence, color = chalk.yellow;
 
   console.error('Testing error message');
 
@@ -14,6 +14,13 @@ function ticker(options) {
     const collection = dbi.collection(`btc-usd-ticker`);
 
     gdax.ticker((data) => {
+      // check sequence
+      if (sequence && sequence !== (+data.sequence - 1) ) {
+        console.error(`ERROR sequence ${sequence} didn't match data.sequence ${data.sequence} `);
+      }
+
+      sequence = data.sequence;
+
       if (data.type === 'match') {
         const current = +data.price;
         if (!last) { last = current; }
