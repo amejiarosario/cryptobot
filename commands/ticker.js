@@ -8,6 +8,10 @@ const program = require('commander');
 function ticker(options) {
   let last, sequence, limits = {}, color = chalk.yellow;
 
+  /**
+   * @param {Object} limits object containing the limits and orders instructions
+   * @param {*} current price
+   */
   function checkPrice(current) {
     const alert = `Alert: Price ${current} within limits`;
 
@@ -72,7 +76,7 @@ function ticker(options) {
 
         console.log(`${data.time} (${data.type}): ${data.side} \t ${data.product_id} ${data.size} @ ${data.price} \t ${color(diff)} ${color(change)}% \t ${JSON.stringify(limits)}`);
 
-        checkPrice(current, limits)
+        checkPrice(current)
 
         collection.insertOne({
           time: new Date(data.time),
