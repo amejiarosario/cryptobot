@@ -16,7 +16,12 @@ let config = {
 
 // load the env file and overrite params
 if(env) {
-  Object.assign(config, require(`./${env}`));
+  try {
+    const envConfig = require(`./${env}`);
+    Object.assign(config, envConfig);
+  } catch (error) {
+    console.log(`No env config found for <${env}>, using default.`);
+  }
 }
 
 module.exports = config;
