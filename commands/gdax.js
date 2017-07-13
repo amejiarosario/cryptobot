@@ -12,6 +12,7 @@ const authedClient = new Gdax.AuthenticatedClient(
 
 function ticker(callback, products = ['BTC-USD']) {
   const websocket = new Gdax.WebsocketClient(products, { websocketURI: config.gdax.wss});
+  
   websocket.on('open', () => console.info(`Listening for ${products.join(', ')} on GDAX`));
   websocket.on('message', callback);
   websocket.on('error', (e) => console.warn('ERROR websocket: ', e));

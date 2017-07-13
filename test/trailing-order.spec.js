@@ -57,6 +57,40 @@ describe('Trailing Price', function() {
     to.setPrice(1717); // should buy here since it went up for more than a 1%
   });
 
+  it('should emit a buy event', (done) => {
+    const to = new TrailingOrder();
+    to.setFunds({base: 1, quote: 1});
+
+    to.on('buy', (err, params) => {
+      expect(params).to.eql({
+        side: 'buy',
+        price: 1799,
+        size: +(1 * 1 / 1799).toFixed(8)
+      });
+      done();
+    });
+
+    to.setOrder({buy: {price: 1800, trailing: 0.02, percentage: 1}});
+    to.setPrice(2301);
+    to.setPrice(1500);
+    to.setPrice(1799);
+  });
+
+  it('should emit a buy event with error', (done) => {
+    const to = new TrailingOrder();
+
+    to.on('buy', (err, params) => {
+      expect(err).to.contain('funds');
+      expect(params).to.equal(undefined);
+      done();
+    });
+
+    to.setOrder({ buy: { price: 1800, trailing: 0.02, percentage: 1 } });
+    to.setPrice(2301);
+    to.setPrice(1500);
+    to.setPrice(1799);
+  });  
+
   // you want to sell at the highest price possible
   it('should set a trailing sell with limit on 2000 when price was on 1700', (done) => {
     const to = new TrailingOrder();
@@ -106,7 +140,39 @@ describe('Trailing Price', function() {
     to.setPrice(2010); // trailing: 2020, sell: 2000
     to.setPrice(2001);
     to.setPrice(1998); // should sell here
-  }); 
+  });
+
+  it('should emit a sell event', (done) => {
+    const to = new TrailingOrder();
+    to.setFunds({ base: 2, quote: 1 });
+
+    to.on('sell', (err, params) => {
+      expect(params).to.eql({
+        side: 'sell',
+        price: 1500,
+        size: +(2 * 0.9).toFixed(8)
+      });
+      done();
+    });
+
+    to.setOrder({ sell: { price: 1800, trailing: 0.02, percentage: 0.9 } });
+    to.setPrice(2301);
+    to.setPrice(1500);
+  });
+
+  it('should emit a sell event with error', (done) => {
+    const to = new TrailingOrder();
+
+    to.on('sell', (err, params) => {
+      expect(err).to.contain('funds');
+      expect(params).to.equal(undefined);
+      done();
+    });
+
+    to.setOrder({ sell: { price: 1800, trailing: 0.02, percentage: 1 } });
+    to.setPrice(2301);
+    to.setPrice(1500);
+  });    
 
   it('should execute selling and buying on the same limit', (done) => {
     const to = new TrailingOrder();

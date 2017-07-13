@@ -1,27 +1,40 @@
 const chalk = require('chalk');
-
 const gdax = require('./gdax');
 const db = require('../db');
 const netcli = require('./socket-cli');
 const program = require('commander');
+const TrailingOrder = require('../lib/trailing-order');
 
 function ticker(options) {
-  let last, sequence, limits = {}, color = chalk.yellow;
+  let last, sequence, color = chalk.yellow;
 
-  /**
-   * @param {Object} limits object containing the limits and orders instructions
-   * @param {*} current price
-   */
-  function checkPrice(current) {
-    const alert = `Alert: Price ${current} within limits`;
+  const trailingOrder = new TrailingOrder('BTC/USD');
 
-    if (limits.lte && limits.gte && current <= parseFloat(limits.lte) && current >= parseFloat(limits.gte) ||
-      limits.lte && current <= parseFloat(limits.lte) ||
-      limits.gte && current >= parseFloat(limits.gte)) {
-      console.log(chalk.bgBlue(chalk.white(alert)));
-      limits = {};
-    }
+  trailingOrder.on('buy', (params) => {
+    console.log('buying... nothing', params);
+    updateFunds();
+  });
+
+  trailingOrder.on('sell', (params) => {
+    console.log('buying... nothing', params);
+    updateFunds();
+  });
+  
+  // get available funds
+  function updateFunds() {
+    gdax.authedClient.getAccounts((err, status, data) => {
+      if (err) console.error('ERROR: getting accounts funds ', err);
+
+      const btc = data.filter((d) => d.currency === 'BTC')
+      const usd = data.filter((d) => d.currency === 'USD');
+
+      trailingOrder.setFunds({
+        base: btc[0].available,
+        quote: usd[0].available
+      });
+    });
   }
+  updateFunds()
 
   // telnet localhost 7777 | {"lte": 2520, "gte": 2521}
   netcli.server((socket) => {
@@ -34,15 +47,13 @@ function ticker(options) {
 
     socket.on('data', (res) => {
       try {
-        var test = JSON.parse(res);
-        if(!test.lte && !test.gte) throw new Error('You have to specify lte or gte');
-        limits = test;
+        const order = JSON.parse(res);
+        trailingOrder.setOrder(order);
       } catch (error) {
         socket.write(`${error}\r\n`);
       }
 
-      console.log(res, limits);
-      socket.write(`${JSON.stringify(limits)}\r\n`);
+      socket.write(`${JSON.stringify(trailingOrder)}\r\n`);
 
       if (res.match(/close/i)) {
         socket.end('bye!\r\n');
@@ -74,9 +85,9 @@ function ticker(options) {
         const change = (diff * 100 / last).toFixed(4);
         const color = diff > 0 ? chalk.green : (diff < 0 ? chalk.red : chalk.gray);
 
-        console.log(`${data.time} (${data.type}): ${data.side} \t ${data.product_id} ${data.size} @ ${data.price} \t ${color(diff)} ${color(change)}% \t ${JSON.stringify(limits)}`);
+        trailingOrder.setPrice(current);
 
-        checkPrice(current)
+        console.log(`${data.time} (${data.type}): ${data.side} \t ${data.product_id} ${data.size} @ ${data.price} \t ${color(diff)} ${color(change)}% \t ${JSON.stringify(trailingOrder)}`);
 
         collection.insertOne({
           time: new Date(data.time),
