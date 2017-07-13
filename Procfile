@@ -1,1 +1,1 @@
-worker: node cli.js ticker
+web: node cli.js ticker

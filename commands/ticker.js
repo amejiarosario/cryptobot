@@ -34,7 +34,7 @@ function ticker(options) {
       });
     });
   }
-  updateFunds()
+  updateFunds();
 
   // telnet localhost 7777 | {"lte": 2520, "gte": 2521}
   netcli.server((socket) => {
