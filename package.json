@@ -20,6 +20,7 @@
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",
   "license": "ISC",
   "engines": {
-    "node": "8.1.4"
+    "node": "8.1.4",
+    "npm": ">5.0.3"
   }
 }

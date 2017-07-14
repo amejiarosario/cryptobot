@@ -102,12 +102,6 @@ var byWeek = [project, {$group: groupByWeek}, {$limit: 4 }];
 var groupByMonth = Object.assign({}, group, {_id : { year: '$year', month: '$month' }});
 var byMonth = [project, {$group: groupByMonth}, {$limit: 12 }];
 
-// db.getCollection('btc-usd-ticker').aggregate(byMinute);
-// db.getCollection('btc-usd-ticker').aggregate(byHour);
-// db.getCollection('btc-usd-ticker').aggregate(byDay);
-// db.getCollection('btc-usd-ticker').aggregate(byWeek);
-// db.getCollection('btc-usd-ticker').aggregate(byMonth);
-
 // volatility
 //{ $subtract: ['$high', '$low'] } //{ $divide: [ , '$open' ] }
 var volatilityMap = { $project: {
@@ -119,11 +113,11 @@ var volatilityMap = { $project: {
 var volatilityReduce = { $group: {
     _id: null,
     high: { $max: '$volatility'},
-    highDiff: { $max: '$diff'},
-    low: { $min: '$volatility' },
-    lowDiff: { $min: '$diff' },    
     avg: { $avg: '$volatility' },
-    avgDiff: { $avg: '$diff' }    
+    low: { $min: '$volatility' },
+    highDiff: { $max: '$diff'},    
+    avgDiff: { $avg: '$diff' },   
+    lowDiff: { $min: '$diff' }     
 }};
 
 
@@ -132,7 +126,14 @@ db.getCollection('btc-usd-ticker').aggregate(byMinute.concat(volatilityMap, vola
 db.getCollection('btc-usd-ticker').aggregate(byHour.concat(volatilityMap, volatilityReduce));
 db.getCollection('btc-usd-ticker').aggregate(byDay.concat(volatilityMap, volatilityReduce));
 db.getCollection('btc-usd-ticker').aggregate(byWeek.concat(volatilityMap, volatilityReduce));
-db.getCollection('btc-usd-ticker').aggregate(byMonth.concat(volatilityMap, volatilityReduce));
+// db.getCollection('btc-usd-ticker').aggregate(byMonth.concat(volatilityMap, volatilityReduce));
+
+// db.getCollection('btc-usd-ticker').aggregate(byMinute);
+// db.getCollection('btc-usd-ticker').aggregate(byHour);
+// db.getCollection('btc-usd-ticker').aggregate(byDay);
+// db.getCollection('btc-usd-ticker').aggregate(byWeek);
+// db.getCollection('btc-usd-ticker').aggregate(byMonth);
+
 ```
 
 
