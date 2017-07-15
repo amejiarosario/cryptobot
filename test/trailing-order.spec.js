@@ -211,7 +211,7 @@ describe('Trailing Price', function() {
     to.setPrice(3900); // sell 
   });
 
-  it.only('should trade with whatever is less between amount or percentage of total funds', (done) => {
+  it('should trade with whatever is less between amount or percentage of total funds', (done) => {
     const to = new TrailingOrder();
     to.setFunds({ base: 0.2414421300000000, quote: 2962.0000246543060000 });
     to.setPrice(2574);

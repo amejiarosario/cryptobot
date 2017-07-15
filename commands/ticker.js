@@ -5,21 +5,21 @@ const gdax = require('./gdax');
 const db = require('../db');
 const netcli = require('./socket-cli');
 const TrailingOrder = require('../lib/trailing-order');
+const callback = require('./helper').callback;
 
 function ticker(options) {
   let last, sequence, color = chalk.yellow;
 
   const trailingOrder = new TrailingOrder('BTC/USD');
 
-  trailingOrder.on('buy', (params) => {
-    console.log('buying... nothing', params);
-    updateFunds();
-  });
+  function trade(params) {
+    console.log('trading...', params);
+    gdax.setOrder(params, callback);
+    setTimeout(updateFunds, 5e3);
+  }
 
-  trailingOrder.on('sell', (params) => {
-    console.log('buying... nothing', params);
-    updateFunds();
-  });
+  trailingOrder.on('buy', trade);
+  trailingOrder.on('sell', trade);
   
   // get available funds
   function updateFunds() {

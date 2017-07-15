@@ -42,7 +42,8 @@ function getOrders(callback) {
 
 /**
  * See https://docs.gdax.com/#place-a-new-order
- * @param {*} params
+ * @param {*} params sell params
+ * @property {String} params.type [optional] limit, market, or stop (default is limit)
  * - type	[optional] limit, market, or stop (default is limit)
    - side	buy or sell
    - product_id	A valid product id
