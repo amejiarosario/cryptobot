@@ -210,4 +210,51 @@ describe('Trailing Price', function() {
     to.setPrice(4000); 
     to.setPrice(3900); // sell 
   });
+
+  it.only('should trade with whatever is less between amount or percentage of total funds', (done) => {
+    const to = new TrailingOrder();
+    to.setFunds({ base: 0.2414421300000000, quote: 2962.0000246543060000 });
+    to.setPrice(2574);
+
+    to.on('buy', (error, params) => {
+      expect(error).to.equal(null);
+      expect(params).to.eql({
+        side: 'buy',
+        price: 1995,
+        size: +(750/1995).toFixed(8)
+      }); 
+    });
+
+    to.on('sell', (error, params) => {
+      expect(error).to.equal(null);
+      expect(params).to.eql({
+        side: 'sell',
+        price: 3500,
+        size: +(250 / 3500).toFixed(8)
+      });
+      done();
+    })    
+
+    to.setOrder({ buy: { price: 2000, trailing: 0.05, percentage: 0.5, amount: 750},
+      sell: { price: 3000, trailing: 0.05, percentage: 0.5, amount: 250}});
+
+    to.setPrice(2100);
+    
+    to.setPrice(2000); // trailing buy 2100 or set new trail on 1900
+    expect(to.buyingPrice).to.equal(2100);
+    expect(to.newBuyTrail).to.equal(1900);
+
+    to.setPrice(2095);
+    to.setPrice(2000);
+    to.setPrice(1900);
+    expect(to.buyingPrice).to.equal(1995);
+    expect(to.newBuyTrail).to.equal(1805);
+
+    to.setPrice(1993); 
+    to.setPrice(1994); 
+    to.setPrice(1995); // buy
+    to.setPrice(1996);
+    to.setPrice(4000);
+    to.setPrice(3500); // sell
+  });
 });
