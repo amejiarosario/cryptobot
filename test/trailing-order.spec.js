@@ -257,4 +257,66 @@ describe('Trailing Price', function() {
     to.setPrice(4000);
     to.setPrice(3500); // sell
   });
+
+  it('use case test', (done) => {
+    const to = new TrailingOrder();
+    to.setFunds({ base: 0.2414421300000000, quote: 2962.0000246543060000 });
+    to.setPrice(2048.12000000);
+
+    to.on('buy', (error, params) => {
+      expect(error).to.equal(null);
+      expect(params).to.eql({
+        side: 'buy',
+        price: 2125.32,
+        size: +(900 / 2125.32).toFixed(8)
+      });
+      done();
+    });
+
+    to.on('sell', (error, params) => {
+      expect(false).to.equal(true);
+    })
+
+    to.setOrder({
+      buy: { price: 2000, trailing: 0.05, percentage: 0.5, amount: 750 },
+      sell: { price: 3000, trailing: 0.05, percentage: 0.5, amount: 250 }
+    });
+
+    to.setPrice(2000); // trailing buy 2100 or set new trail on 1900
+    expect(to.buyingPrice).to.equal(2100);
+    expect(to.newBuyTrail).to.equal(1900);        
+
+    console.log('==================')
+
+    to.setOrder({
+      "buy": { "price": 2046, "trailing": 0.03, "percentage": 0.5, "amount": 900 }
+    });
+
+    expect(to.buyingPrice).to.equal(undefined);
+    expect(to.newBuyTrail).to.equal(undefined); 
+
+    to.setPrice(2047.86000000);
+    to.setPrice(2046.36000000); // trailing buy 2100 or set new trail on 1900
+    expect(to.buyingPrice).to.equal(undefined);
+    expect(to.newBuyTrail).to.equal(2046);
+
+    to.setPrice(2045.45000000); // break trailing
+    expect(to.buyingPrice).to.equal(2106.8135);
+    expect(to.newBuyTrail).to.equal(1984.0865);
+
+    to.setPrice(2037.96000000);
+    expect(to.buyingPrice).to.equal(2106.8135);
+    expect(to.newBuyTrail).to.equal(1984.0865);
+
+    to.setPrice(2035.20000000);
+    expect(to.buyingPrice).to.equal(2106.8135);
+    expect(to.newBuyTrail).to.equal(1984.0865);    
+
+    to.setPrice(2034.95000000);
+    to.setPrice(2031.96000000);
+    to.setPrice(2034.10000000);
+    to.setPrice(2029.80000000);
+    to.setPrice(2025.32000000);
+    to.setPrice(2125.32000000); // sell    
+  })
 });

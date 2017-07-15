@@ -11,6 +11,11 @@ heroku create crybot
 # test locally
 heroku local worker
 heroku local web
+heroku local
+
+# There are two apps here
+heroku config -a crybot-web
+heroku config -a crybot
 
 # pushing code
 git push heroku master
