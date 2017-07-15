@@ -55,7 +55,7 @@ function ticker(options) {
         socket.end('bye!\r\n');
       
       } else if(res.match(/^order/i)) {
-        socket.write(`${JSON.stringify(trailingOrder.order)}\r\n`);
+        socket.write(JSON.stringify(trailingOrder.order));
       
       } else {
         try {

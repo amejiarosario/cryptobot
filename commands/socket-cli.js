@@ -23,9 +23,9 @@ function client(message, callback) {
   client.setEncoding('utf8');
 
   client.on('data', (data) => {
-    console.log('client.data', JSON.stringify(data));
+    console.log('socket.client.data', data);
     callback(null, data);
-    client.end();    
+    client.end();
   });
 
   client.on('error', callback);
