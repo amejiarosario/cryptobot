@@ -52,14 +52,14 @@ function ticker(options) {
 
     } else {
       try {
-        console.log(res);
-        const order = JSON.parse(res);
+        console.log(message);
+        const order = JSON.parse(message);
         console.log('setting order to ', order)
         trailingOrder.setOrder(order);
         return JSON.stringify(trailingOrder.order);
 
       } catch (error) {
-        return `ERROR: failed setting order. ${error}, ${res}`
+        return `ERROR: failed setting order. ${error}, ${message}`
       }
     }
   });
