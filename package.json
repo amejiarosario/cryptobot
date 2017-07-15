@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "start": "node ./cli.js ticker"
+    "start": "node web"
   },
   "keywords": [],
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",
