@@ -61,8 +61,9 @@ function ticker(options) {
         try {
           console.log(res);
           const order = JSON.parse(res);
+          console.log('setting order to ', order)
           trailingOrder.setOrder(order);
-          socket.write(`${JSON.stringify(trailingOrder)}\r\n`);
+          socket.write(`${JSON.stringify(trailingOrder.order)}`);
         } catch (error) {
           socket.write(`ERROR: failed setting order. ${error}, ${res}\r\n`);
         }

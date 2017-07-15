@@ -17,7 +17,7 @@ function server(callback) {
 function client(message, callback) {
   const client = net.createConnection({ port: port }, () => {
     console.log('connected to server on port ', port);
-    client.write(`${message}\r\n`);
+    client.write(message);
   });
 
   client.setEncoding('utf8');

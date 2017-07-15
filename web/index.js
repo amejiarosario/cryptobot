@@ -25,7 +25,8 @@ app.get('/orders', function (req, res) {
 });
 
 app.post('/orders', (req, res) => {
-  netcli.client(JSON.stringify(req.body), (err, data) => {
+  const body = JSON.stringify(req.body);
+  netcli.client(body, (err, data) => {
     res.json(err || data);
   });  
 });
