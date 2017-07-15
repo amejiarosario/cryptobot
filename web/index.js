@@ -3,9 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const port = require('../config').web.port;
+const amqp = require('../lib/messaging/amqp');
 const app = express();
-
-const netcli = require('../commands/socket-cli');
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -17,7 +16,7 @@ app.get('/', (req, res) => {
 
 app.get('/orders', function (req, res) {
   // res.json({});
-  netcli.client('order', (err, data) => {
+  amqp.client('order', (err, data) => {
     if(err) console.error("ERROR: failed getting orders", err);
     console.log('app.get.data:', data);
     res.json(data);
@@ -26,7 +25,7 @@ app.get('/orders', function (req, res) {
 
 app.post('/orders', (req, res) => {
   const body = JSON.stringify(req.body);
-  netcli.client(body, (err, data) => {
+  amqp.client(body, (err, data) => {
     res.json(err || data);
   });  
 });

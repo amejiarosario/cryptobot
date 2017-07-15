@@ -3,7 +3,7 @@ const program = require('commander');
 
 const gdax = require('./gdax');
 const db = require('../db');
-const netcli = require('./socket-cli');
+const amqp = require('../lib/messaging/amqp')
 const TrailingOrder = require('../lib/trailing-order');
 const callback = require('./helper').callback;
 
@@ -43,32 +43,25 @@ function ticker(options) {
   updateFunds();
 
   // telnet localhost 7777 | {"lte": 2520, "gte": 2521}
-  netcli.server((socket) => {
-    socket.setEncoding('utf-8');
-    // 'connection' listener
-    socket.on('end', () => {
-      console.log('client disconnected');
-    });
+  amqp.server((message) => {
+    if (message.match(/^close/i)) {
+      return 'bye';
 
-    socket.on('data', (res) => {
-      if (res.match(/^close/i)) {
-        socket.end('bye!\r\n');
-      
-      } else if(res.match(/^order/i)) {
-        socket.write(JSON.stringify(trailingOrder.order));
-      
-      } else {
-        try {
-          console.log(res);
-          const order = JSON.parse(res);
-          console.log('setting order to ', order)
-          trailingOrder.setOrder(order);
-          socket.write(`${JSON.stringify(trailingOrder.order)}`);
-        } catch (error) {
-          socket.write(`ERROR: failed setting order. ${error}, ${res}\r\n`);
-        }
+    } else if (message.match(/^order/i)) {
+      return JSON.stringify(trailingOrder.order);
+
+    } else {
+      try {
+        console.log(res);
+        const order = JSON.parse(res);
+        console.log('setting order to ', order)
+        trailingOrder.setOrder(order);
+        return JSON.stringify(trailingOrder.order);
+
+      } catch (error) {
+        return `ERROR: failed setting order. ${error}, ${res}`
       }
-    });
+    }
   });
 
   db.connect((err, dbi) => {

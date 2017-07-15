@@ -19,6 +19,11 @@ let config = {
 
   socket: {
     port: process.env.NET_PORT || 7777
+  },
+
+  amqp: {
+    url: process.env.CLOUDAMQP_URL || 'amqp://localhost',
+    queue: process.env.AMQP_QUEUE || 'localbot2'
   }
 };
 

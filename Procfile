@@ -1,2 +1,2 @@
 worker: node cli.js ticker
-# web: node web
+web: node web
