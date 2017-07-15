@@ -36,6 +36,11 @@ mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u h
 
 # import data # mongoimport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c <collection> -u <user> -p <password> --file <input file>
 mongoimport -h localhost:27017 -d localbot2 -c btc-usd-ticker --file btc-usd-ticker.json
+
+
+# see ports
+lsof -i -n -P | grep LISTEN
+
 ```
 
 # Switching to OpenShift?

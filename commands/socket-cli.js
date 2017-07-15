@@ -1,36 +1,41 @@
 const net = require('net');
-const port = process.env.PORT || '7777'
-
+const port = require('../config').socket.port;
 
 function server(callback) {
-  // test with: telnet localhost 7777
   const server = net.createServer(callback);
 
   server.on('error', (err) => {
-    throw err;
+    console.error('ERROR: receiving message on socket server. ', err);
   });
 
   server.listen(port, () => {
-    console.log('server bound', server.address());
+    console.log('TCP/IP Server on ', server.address());
   });
 }
 
 
-function client() {
-  const client = net.createConnection({ port: 8124 }, () => {
-    //'connect' listener
-    console.log('connected to server!');
-    client.write('world!\r\n');
+function client(message, callback) {
+  const client = net.createConnection({ port: port }, () => {
+    console.log('connected to server on port ', port);
+    client.write(`${message}\r\n`);
   });
+
+  client.setEncoding('utf8');
+
   client.on('data', (data) => {
-    console.log(data.toString());
-    client.end();
+    console.log('client.data', JSON.stringify(data));
+    callback(null, data);
+    client.end();    
   });
+
+  client.on('error', callback);
+
   client.on('end', () => {
     console.log('disconnected from server');
-  });  
+  });
 }
 
 module.exports = {
-  server
+  server,
+  client
 };

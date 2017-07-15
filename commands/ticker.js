@@ -1,8 +1,9 @@
 const chalk = require('chalk');
+const program = require('commander');
+
 const gdax = require('./gdax');
 const db = require('../db');
 const netcli = require('./socket-cli');
-const program = require('commander');
 const TrailingOrder = require('../lib/trailing-order');
 
 function ticker(options) {
@@ -28,6 +29,11 @@ function ticker(options) {
       const btc = data.filter((d) => d.currency === 'BTC')
       const usd = data.filter((d) => d.currency === 'USD');
 
+      console.log('FUNDS: ');
+      data.map((d) => {
+        console.log(`${d.currency}: ${d.available}`);
+      });
+
       trailingOrder.setFunds({
         base: btc[0].available,
         quote: usd[0].available
@@ -39,34 +45,34 @@ function ticker(options) {
   // telnet localhost 7777 | {"lte": 2520, "gte": 2521}
   netcli.server((socket) => {
     socket.setEncoding('utf-8');
-
     // 'connection' listener
     socket.on('end', () => {
       console.log('client disconnected');
     });
 
     socket.on('data', (res) => {
-      try {
-        const order = JSON.parse(res);
-        trailingOrder.setOrder(order);
-      } catch (error) {
-        socket.write(`${error}\r\n`);
-      }
-
-      socket.write(`${JSON.stringify(trailingOrder)}\r\n`);
-
-      if (res.match(/close/i)) {
+      if (res.match(/^close/i)) {
         socket.end('bye!\r\n');
+      
+      } else if(res.match(/^order/i)) {
+        socket.write(`${JSON.stringify(trailingOrder.order)}\r\n`);
+      
+      } else {
+        try {
+          console.log(res);
+          const order = JSON.parse(res);
+          trailingOrder.setOrder(order);
+          socket.write(`${JSON.stringify(trailingOrder)}\r\n`);
+        } catch (error) {
+          socket.write(`ERROR: failed setting order. ${error}, ${res}\r\n`);
+        }
       }
     });
-
-    socket.write('hola\r\n');
-    // socket.pipe(socket);
   });
 
   db.connect((err, dbi) => {
     if(err) console.warn('ERROR connecting to database. ', err);
-    console.log(`Connected correctly to server: ${dbi.serverConfig.host}:${dbi.serverConfig.port}/${dbi.databaseName}`);   
+    console.log(`Mongo: Connected correctly to server: ${dbi.serverConfig.host}:${dbi.serverConfig.port}/${dbi.databaseName}`);   
 
     const collection = dbi.collection(`btc-usd-ticker`);
 

@@ -4,8 +4,11 @@
   "description": "Cryptocurrency trading bot",
   "main": "cli.js",
   "dependencies": {
+    "body-parser": "1.17.2",
+    "express": "4.15.3",
     "gdax": "amejiarosario/gdax-node#heartbeat",
-    "mongodb": "2.2.29"
+    "mongodb": "2.2.29",
+    "morgan": "1.8.2"
   },
   "devDependencies": {
     "chai": "4.1.0",
