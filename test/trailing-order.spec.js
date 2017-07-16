@@ -258,7 +258,7 @@ describe('Trailing Price', function() {
     to.setPrice(3500); // sell
   });
 
-  it('use case test', (done) => {
+  it('use trailing amouts', (done) => {
     const to = new TrailingOrder();
     to.setFunds({ base: 0.2414421300000000, quote: 2962.0000246543060000 });
     to.setPrice(2048.12000000);
@@ -318,5 +318,16 @@ describe('Trailing Price', function() {
     to.setPrice(2029.80000000);
     to.setPrice(2025.32000000);
     to.setPrice(2125.32000000); // sell    
+  });
+
+  it('should trade without percentage just with the amount specified', () => {
+    const buy = { "buy": { "price": 2000, "trailing": 0.1, "amount": 1000 } };
+
+    const to = new TrailingOrder();
+    to.setFunds({ base: 0.2414421300000000, quote: 2012.0000246543060000 });
+    
+    to.setPrice(1875.51000000);
+    expect(to.buyingPrice).to.equal(2063.061);
+    expect(to.newBuyTrail).to.equal(1687.959);    
   })
 });

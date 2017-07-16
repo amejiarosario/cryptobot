@@ -12,8 +12,9 @@ function ticker(options) {
 
   const trailingOrder = new TrailingOrder('BTC/USD');
 
-  function trade(params) {
+  function trade(error, params) {
     console.log('trading...', params);
+    if(err) console.error(error);
     gdax.setOrder(params, callback);
     setTimeout(updateFunds, 5e3);
   }
