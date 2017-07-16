@@ -2,7 +2,7 @@
   "name": "cryptobot",
   "version": "1.0.0",
   "description": "Cryptocurrency trading bot",
-  "main": "cli.js",
+  "main": "bin/cli.js",
   "dependencies": {
     "amqplib": "0.5.1",
     "body-parser": "1.17.2",
@@ -18,8 +18,10 @@
     "mocha": "3.4.2"
   },
   "scripts": {
-    "test": "mocha",
-    "start": "node web"
+    "test": "mocha lib/**/*spec.js lib/*spec.js test/*spec.js test/**/*spec.js",
+    "start": "node web",
+    "precommit": "npm test",
+    "prepush": "npm test"
   },
   "keywords": [],
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",
