@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const package = require('./package');
-const ticker = require('./commands/ticker');
-const orders = require('./commands/order');
+
+const package = require('../package');
+const ticker = require('../lib/ticker');
+const orders = require('../lib/ticker/order');
 
 program
   .version(package.version);

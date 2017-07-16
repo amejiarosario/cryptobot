@@ -6,6 +6,7 @@
   "dependencies": {
     "amqplib": "0.5.1",
     "body-parser": "1.17.2",
+    "debug": "2.6.8",
     "express": "4.15.3",
     "gdax": "amejiarosario/gdax-node#heartbeat",
     "mongodb": "2.2.29",
@@ -19,7 +20,7 @@
   },
   "scripts": {
     "test": "mocha lib/**/*spec.js lib/*spec.js test/*spec.js test/**/*spec.js",
-    "start": "node web",
+    "start": "node bin/cli.js ticker",
     "precommit": "npm test",
     "prepush": "npm test"
   },
