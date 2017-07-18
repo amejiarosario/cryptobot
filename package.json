@@ -16,13 +16,15 @@
   "devDependencies": {
     "chai": "4.1.0",
     "husky": "0.14.3",
-    "mocha": "3.4.2"
+    "mocha": "3.4.2",
+    "nyc": "11.0.3"
   },
   "scripts": {
-    "test": "mocha lib/**/*spec.js lib/*spec.js test/*spec.js test/**/*spec.js",
+    "test": "nyc --reporter=html --reporter=text mocha lib/**/*spec.js lib/*spec.js test/*spec.js test/**/*spec.js",
     "start": "node bin/cli.js ticker",
     "precommit": "npm test",
-    "prepush": "npm test"
+    "prepush": "npm test",
+    "watch": "mocha --watch lib/**/*spec.js --growl"
   },
   "keywords": [],
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",
