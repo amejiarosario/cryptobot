@@ -1,4 +1,13 @@
 
+# backup
+
+```sh
+# get data backup
+mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/btc-usd-ticker.json
+
+# import data # mongoimport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c <collection> -u <user> -p <password> --file <input file>
+mongoimport -h localhost:27017 -d localbot2 -c btc-usd-ticker --file data/btc-usd-ticker.json
+```
 # Notes
 
 Ticks aggregation (min, hr, day, wk, month)
@@ -70,9 +79,9 @@ var volatilityReduce = { $group: {
     high: { $max: '$volatility'},
     avg: { $avg: '$volatility' },
     low: { $min: '$volatility' },
-    highDiff: { $max: '$diff'},    
-    avgDiff: { $avg: '$diff' },   
-    lowDiff: { $min: '$diff' }     
+    highDiff: { $max: '$diff'},
+    avgDiff: { $avg: '$diff' },
+    lowDiff: { $min: '$diff' }
 }};
 
 
@@ -116,7 +125,7 @@ Websocket ticker
   funds: '432.2831240000000000',
   product_id: 'BTC-USD',
   sequence: 3510553461,
-  time: '2017-07-06T16:00:15.098000Z' }  
+  time: '2017-07-06T16:00:15.098000Z' }
 
 // remaining: 0.07531 (0.1673 - 0.09199)
 { type: 'match',
@@ -188,7 +197,7 @@ Websocket ticker
   product_id: 'BTC-USD',
   remaining_size: '0.00000000',
   sequence: 3510553465,
-  time: '2017-07-06T16:00:15.098000Z' }  
+  time: '2017-07-06T16:00:15.098000Z' }
 
 { type: 'done',
   side: 'sell',
@@ -198,7 +207,7 @@ Websocket ticker
   price: '2583.88000000',
   remaining_size: '0.02256000',
   sequence: 3510554226,
-  time: '2017-07-06T16:00:20.120000Z' }  
+  time: '2017-07-06T16:00:20.120000Z' }
 
 ```
 
@@ -210,7 +219,7 @@ Websocket ticker
 var project = { $project : {
   _id: 0,
   price: 1,
-  size: 1,    
+  size: 1,
   side : 1,
   year: { $year: "$time" },
   month: { $month: "$time" },
