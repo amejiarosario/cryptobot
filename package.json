@@ -20,7 +20,8 @@
     "nyc": "11.0.3"
   },
   "scripts": {
-    "test": "ENV=test nyc --reporter=html --reporter=text mocha lib/**/*spec.js lib/*spec.js test/*spec.js test/**/*spec.js",
+    "test": "ENV=test mocha lib/**/*spec.js",
+    "coverage": "nyc --reporter=html --reporter=text npm run test",
     "start": "node bin/cli.js ticker",
     "precommit": "npm test",
     "prepush": "npm test",
