@@ -1,7 +1,7 @@
 let config = {
   gdax: {
     api: process.env.GDAX_API || 'http://localhost:5000',
-    wss: process.env.GDAX_WSS || 'ws://localhost:8080'
+    wss: process.env.GDAX_WSS || `ws://localhost:7171`
   },
 
   db: {

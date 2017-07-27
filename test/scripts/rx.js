@@ -7,6 +7,77 @@
 const Rx = require('rxjs/Rx');
 const Observable = Rx.Observable;
 
+const Gdax = require('gdax');
+const config = require('../../config');
+const websocket = new Gdax.WebsocketClient(['BTC-USD', 'ETH-USD'], { websocketURI: config.gdax.wss });
+
+var fromEvent = Observable.fromEvent;
+var throwError = Observable.throw; // http://reactivex.io/rxjs/test-file/spec-js/observables/throw-spec.js.html
+
+var connect = fromEvent(websocket, 'open');
+var error = fromEvent(websocket, 'error').mergeMap(throwError);
+var end = fromEvent(websocket, 'close');
+var message = fromEvent(websocket, 'message');
+
+// Now let's make it shine!
+var datastream = message.merge(error)
+  .skipUntil(connect.race(error))
+  .takeUntil(end.race(error))
+  // .filter(tick => tick.type === 'match');
+
+const subscription = datastream.subscribe(
+  function (v) {
+    // Handle data
+    console.log('data', v);
+  },
+  function (err) {
+    // Handle error
+    console.log('error', err);
+  },
+  function () {
+    // Handle completion
+    console.log('closed!');
+  });
+
+setTimeout(() => {
+  console.log('-----------------')
+  // subscription.unsubscribe();
+  console.log('-----------------')
+}, 1e3);
+
+//////////
+
+// var observable = Rx.Observable.create(function (observer) {
+//   observer.next(1);
+//   observer.next(2);
+//   observer.next(3);
+//   setTimeout(() => {
+//     observer.next(4);
+//     observer.complete();
+//   }, 1000);
+// });
+
+// console.log('just before subscribe');
+
+// observable.subscribe({
+//   next: x => console.log('#1: got value ' + x),
+//   error: err => console.error('something wrong occurred: ' + err),
+//   complete: () => console.log('done'),
+// });
+
+
+// observable.subscribe({
+//   next: x => console.log('#2: got value ' + x),
+//   error: err => console.error('something wrong occurred: ' + err),
+//   complete: () => console.log('done'),
+// });
+
+// console.log('just after subscribe');
+
+///----------
+
+
+/*
 // Observable.of(1, 2, 3).map(function (x) { return x + '!!!'; }); // etc
 
 // https://github.com/ReactiveX/rxjs/blob/master/src/observable/dom/WebSocketSubject.ts#L63
@@ -42,3 +113,4 @@ setTimeout(() => {
   subscription.unsubscribe();
   console.log('-----------------')
 }, 10e3);
+*/
