@@ -3,7 +3,7 @@
 // https://docs.gdax.com/#get-currencies
 // https://github.com/coinbase/gdax-node
 const Gdax = require('gdax');
-const callback = require('../commands/helper').callback;
+const callback = require('../../lib/common/helper').callback;
 
 // ---------------
 
@@ -115,21 +115,21 @@ const twss = 'wss://ws-feed-public.sandbox.gdax.com';
   price: '2454.87000000',
   product_id: 'BTC-USD',
   sequence: 3436653933,
-  time: '2017-06-27T21:27:16.802000Z' 
+  time: '2017-06-27T21:27:16.802000Z'
 }
 */
 
 // Rates history
 // publicClient.getProductHistoricRates((e, r, d) => console.log(d.slice(0, 10), d.length, d));
-// publicClient.getProductHistoricRates({ 'granularity': 1, 
-//   start: (new Date(1498601940 * 1000)).toISOString(), 
+// publicClient.getProductHistoricRates({ 'granularity': 1,
+//   start: (new Date(1498601940 * 1000)).toISOString(),
 //   end: (new Date(1498602120 * 1000)).toISOString() }, (e, r, d) => console.log(e, r.statusCode, d.length, d));
 
 // publicClient.getProductHistoricRates({
 //   // 'granularity': 1,
 //   start: (new Date(1498601940 * 1000)).toISOString(),
 //   end: (new Date(1498602120 * 1000)).toISOString()
-// }, (e, r, d) => console.log(e, r.statusCode, d.length, d));  
+// }, (e, r, d) => console.log(e, r.statusCode, d.length, d));
 
 // [
 //   [time, low, high, open, close, volume],

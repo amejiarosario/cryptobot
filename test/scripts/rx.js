@@ -8,46 +8,53 @@ const Rx = require('rxjs/Rx');
 const Observable = Rx.Observable;
 const Websocket = require('ws');
 
-const Gdax = require('gdax');
-const config = require('../../config');
-// const websocket = new Gdax.WebsocketClient(['BTC-USD'], { websocketURI: config.gdax.wss, heartbeat: true });
-const websocket = new Websocket('ws://localhost:7171');
-setTimeout(() => websocket.send('hola'), 1e3);
-setTimeout(() => websocket.send('dos'), 2e3);
+const o = Observable.of(1500, 1600, 2000, 2500, 3000).concatMap(x => Observable.of(x).delay(1000));
+// const o = Observable.interval(1000).mergeMap(i => Observable.of({type: 'test', value: i}) );
+o.subscribe(msg => console.log(1, msg));
 
-var fromEvent = Observable.fromEvent;
-var throwError = Observable.throw; // http://reactivex.io/rxjs/test-file/spec-js/observables/throw-spec.js.html
+// o.mergeMap(i => Observable.of(Object.assign(i, {a: 1}))).subscribe(msg => console.log(2, msg));
 
-var connect = fromEvent(websocket, 'open');
-var error = fromEvent(websocket, 'error').mergeMap(throwError);
-var end = fromEvent(websocket, 'close');
-var message = fromEvent(websocket, 'message');
 
-// Now let's make it shine!
-var datastream = message.merge(error)
-  .skipUntil(connect.race(error))
-  .takeUntil(end.race(error)).retry(3)
-  .filter(tick => tick.type === 'match');
+// const Gdax = require('gdax');
+// const config = require('../../config');
+// // const websocket = new Gdax.WebsocketClient(['BTC-USD'], { websocketURI: config.gdax.wss, heartbeat: true });
+// const websocket = new Websocket('ws://localhost:7171');
+// setTimeout(() => websocket.send('hola'), 1e3);
+// setTimeout(() => websocket.send('dos'), 2e3);
 
-const subscription = datastream.subscribe(
-  function (v) {
-    // Handle data
-    console.log('data', v.price);
-  },
-  function (err) {
-    // Handle error
-    console.log('error >', err);
-  },
-  function () {
-    // Handle completion
-    console.log('closed!');
-  });
+// var fromEvent = Observable.fromEvent;
+// var throwError = Observable.throw; // http://reactivex.io/rxjs/test-file/spec-js/observables/throw-spec.js.html
 
-setTimeout(() => {
-  console.log('-----------------')
-  // subscription.unsubscribe();
-  console.log('-----------------')
-}, 1e3);
+// var connect = fromEvent(websocket, 'open');
+// var error = fromEvent(websocket, 'error').mergeMap(throwError);
+// var end = fromEvent(websocket, 'close');
+// var message = fromEvent(websocket, 'message');
+
+// // Now let's make it shine!
+// var datastream = message.merge(error)
+//   .skipUntil(connect.race(error))
+//   .takeUntil(end.race(error)).retry(3)
+//   .filter(tick => tick.type === 'match');
+
+// const subscription = datastream.subscribe(
+//   function (v) {
+//     // Handle data
+//     console.log('data', v.price);
+//   },
+//   function (err) {
+//     // Handle error
+//     console.log('error >', err);
+//   },
+//   function () {
+//     // Handle completion
+//     console.log('closed!');
+//   });
+
+// setTimeout(() => {
+//   console.log('-----------------')
+//   // subscription.unsubscribe();
+//   console.log('-----------------')
+// }, 1e3);
 
 //////////
 
