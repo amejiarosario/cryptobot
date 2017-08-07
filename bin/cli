@@ -12,7 +12,7 @@ program
 
 /**
  * bin/cli ticker --provider gdax:BTC-USD,ETH-USD --provider poloniex:BTC-ETH --modifier bufferTime:30000
- * bin/cli ticker --provider gdax:BTC-USD --modifier bufferTime:30000
+ * DEBUG=* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:30000
  */
 program
   .command('ticker')
