@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander');
+require('events').EventEmitter.prototype._maxListeners = 100;
 
 const package = require('../package');
 const ticker = require('../lib/ticker/ticker');
