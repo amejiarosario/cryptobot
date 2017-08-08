@@ -59,5 +59,6 @@ typings/
 
 # data files
 btc-usd-ticker.json
+data/*
 coverage
 
