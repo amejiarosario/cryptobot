@@ -6,9 +6,11 @@
   "dependencies": {
     "amqplib": "0.5.1",
     "body-parser": "1.17.2",
+    "co": "4.6.0",
     "debug": "2.6.8",
     "express": "4.15.3",
     "gdax": "amejiarosario/gdax-node#heartbeat",
+    "moment": "2.18.1",
     "mongodb": "2.2.30",
     "morgan": "1.8.2",
     "rxjs": "5.4.2"

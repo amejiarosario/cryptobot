@@ -19,6 +19,19 @@ Ticks aggregation (min, hr, day, wk, month)
   - low
   - sold (volume)
   - bought (volume)
+  - volume (sold+bought)
+
+
+min
+  - miliseconds values 1000
+hr
+  - minutes values 60
+day
+  - hours values 24
+wk
+  - days values 7
+mo
+  - days values 28-31
 
 ```js
 // Transform data (date and get sold and bought from $side and $size)
