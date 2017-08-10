@@ -25,7 +25,7 @@
   "scripts": {
     "test": "ENV=test mocha lib/**/*spec.js",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
-    "start": "DEBUG=*,-express:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
+    "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
     "precommit": "npm test",
     "prepush": "npm test",
     "watch": "ENV=test mocha --watch lib/**/*spec.js"
