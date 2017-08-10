@@ -99,13 +99,17 @@ co(function* () {
       const [aggregatorFormat, keyFormat] = format.split(splitter);
       const aggregator = timestamp.format(aggregatorFormat);
 
-      const values = {};
+      const set = {};
+      const setOnInsert = { open: price };
       if(time === 'minutes') {
         seq = seq > 900 ? 100 : seq + 1;
         const microseconds = Math.round((timestamp.format('ss.SSS') + seq) * 1e6);
-        values[`values.${microseconds}`] = doc; // don't save for agg higher than minutes
+        set[`values.${microseconds}`] = doc; // don't save for agg higher than minutes
+      } else {
+        set['values.close'] = doc;
+        setOnInsert['values.open'] = doc;
       }
-      values.close = price;
+      set.close = price;
 
       const filter = {
         time: aggregator
@@ -116,14 +120,14 @@ co(function* () {
       const update = {
         $max: { high: price },
         $min: { low: price },
-        $setOnInsert: { open: price },
+        $setOnInsert: setOnInsert,
         $inc: {
           count: 1,
           volume: volume,
           bought: bought,
           sold: sold
         },
-        $set: values
+        $set: set
       };
 
       const col = db.collection('eth-usd-ticker.' + time);
