@@ -91,8 +91,6 @@ co(function* () {
     const bought = doc.side === 'buy' ? volume : 0;
     const sold = doc.side === 'sell' ? volume : 0;
 
-    seq = 100;
-
     for (const time of Object.keys(times)) {
       const splitter = times[time];
 
