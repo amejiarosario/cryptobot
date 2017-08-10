@@ -62,56 +62,79 @@ co(function* () {
   // db.getCollection('btc-usd-ticker').find({}).sort({time: -1})
 
   const db = yield MongoClient.connect(uri);
-  const collection = db.collection('btc-usd-ticker');
-  const agg = db.collection('btc-usd-ticker.minutes');
-
-  yield agg.remove({});
+  const collection = db.collection('eth-usd-ticker');
 
   var cursor = collection.find({}).sort({ time: 1 });
   // var hasNext = yield cursor.hasNext();
 
   let seq = 100;
+  const format = 'YYYY/MMM(W)DD+HH:mm_ss.SSS';
+  const times = {
+    minutes: '_',
+    hours: ':',
+    days: '+',
+    weeks: ')',
+    months: '('
+  };
+
+  for(const time of Object.keys(times)) {
+    yield db.collection('eth-usd-ticker.' + time).remove({});
+  }
 
   while (yield cursor.hasNext()) {
     var doc = yield cursor.next();
     if(!doc) continue;
 
-    seq = seq > 900 ? 100 : seq + 1;
-
-    const bought = doc.side === 'buy' ? +doc.size : 0;
-    const sold = doc.side === 'sell' ? +doc.size : 0;
     const timestamp = moment.utc(doc.time);
-    const date = timestamp.format('YYYY MMM (W) DD HH:mm');
-    const microseconds = Math.round((timestamp.format('ss.SSS') + seq) * 1e6);
-    const price = +doc.price;
+    const price = parseFloat(doc.price);
+    const volume = parseFloat(doc.size);
+    const bought = doc.side === 'buy' ? volume : 0;
+    const sold = doc.side === 'sell' ? volume : 0;
 
-    const values = {
-      close: price
-    };
-    values[`values.${microseconds}`] = doc;
+    seq = 100;
 
-    const filter = { timeAggregate: date };
-    const options = { upsert: true };
+    for (const time of Object.keys(times)) {
+      const splitter = times[time];
 
-    const update = {
-      $max: { high: price},
-      $min: { low: price },
-      $setOnInsert: { open: price },
-      $inc: {
-        count: 1,
-        volume: +doc.size,
-        bought: bought,
-        sold: sold
-      },
-      $set: values
-    };
+      const [aggregatorFormat, keyFormat] = format.split(splitter);
+      const aggregator = timestamp.format(aggregatorFormat);
 
-    // console.log(`${microseconds} --- ${doc.time}`, value);
+      const values = {};
+      if(time === 'minutes') {
+        seq = seq > 900 ? 100 : seq + 1;
+        const microseconds = Math.round((timestamp.format('ss.SSS') + seq) * 1e6);
+        values[`values.${microseconds}`] = doc; // don't save for agg higher than minutes
+      }
+      values.close = price;
 
-    yield agg.updateOne(filter, update, options);
+      const filter = {
+        time: aggregator
+      };
+
+      const options = { upsert: true };
+
+      const update = {
+        $max: { high: price },
+        $min: { low: price },
+        $setOnInsert: { open: price },
+        $inc: {
+          count: 1,
+          volume: volume,
+          bought: bought,
+          sold: sold
+        },
+        $set: values
+      };
+
+      const col = db.collection('eth-usd-ticker.' + time);
+      yield col.updateOne(filter, update, options);
+      // console.log('eth-usd-ticker.' + time, res.result);
+    }
   }
 
   db.close();
+}).catch(error => {
+  console.log(error);
 });
 
 // 3798688032
