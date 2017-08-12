@@ -7,7 +7,7 @@
     "amqplib": "0.5.1",
     "body-parser": "1.17.2",
     "co": "4.6.0",
-    "debug": "2.6.8",
+    "debug": "amejiarosario/debug#hide-tty-date",
     "express": "4.15.3",
     "gdax": "amejiarosario/gdax-node#heartbeat",
     "moment": "2.18.1",
@@ -28,7 +28,8 @@
     "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
     "precommit": "npm test",
     "prepush": "npm test",
-    "watch": "DEBUG=crybot:* ENV=test mocha --watch lib/**/*spec.js"
+    "watch": "DEBUG=crybot:* ENV=test mocha --watch lib/**/*spec.js",
+    "heroku": "DEBUG=crybot:* DEBUG_DEPTH=6 DEBUG_HIDE_TTY_DATE=true heroku local"
   },
   "keywords": [],
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",
