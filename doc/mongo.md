@@ -1,5 +1,18 @@
+# cloud mongos
+- ds151232.mlab.com:51232/heroku_2frz56zq
+- ds145639.mlab.com:45639/heroku_k9c7jrsc
 
+# Backup Database
+
+```sh
 # backup
+mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/aggregated
+
+# import backup
+mongorestore -h localhost:27017 -d aggregated data/aggregated/*
+```
+
+# backup JSON
 
 ```sh
 # get data backup
