@@ -1,4 +1,4 @@
-[
+exports.accounts = [
   {
     "id": "328cbc77-321c-44c9-9e30-cea1f8248d85",
     "currency": "USD",
@@ -32,3 +32,21 @@
     "profile_id": "f9de7517-451e-4c71-b794-db525d0890b8"
   }
 ]
+
+exports.buy = {
+  "id": "d0c5340b-6d6c-49d9-b567-48c4bfca13d2",
+  "price": "0.10000000",
+  "size": "0.01000000",
+  "product_id": "BTC-USD",
+  "side": "buy",
+  "stp": "dc",
+  "type": "limit",
+  "time_in_force": "GTC",
+  "post_only": false,
+  "created_at": "2016-12-08T20:02:28.53864Z",
+  "fill_fees": "0.0000000000000000",
+  "filled_size": "0.00000000",
+  "executed_value": "0.0000000000000000",
+  "status": "pending",
+  "settled": false
+};
