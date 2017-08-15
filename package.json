@@ -1,6 +1,6 @@
 {
   "name": "cryptobot",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Cryptocurrency trading bot",
   "main": "bin/cli.js",
   "dependencies": {
