@@ -80,4 +80,13 @@ describe('Ticker', function () {
       }, 10);
     });
   });
+
+  describe('should execute only on trade trades', () => {
+    beforeEach(() => {
+      // setup web socket (ticks)
+      // setup mongo (orders)
+      // setup amqp (orders)
+      // setup rest (gdax trades)
+    });
+  });
 });
