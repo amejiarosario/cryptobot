@@ -2,13 +2,72 @@ const sinon = require('sinon');
 const { expect, assert } = require('chai');
 const WebSocket = require('ws');
 const { Observable } = require('rxjs/Rx');
+
 require('events').EventEmitter.prototype._maxListeners = 100;
 
 const GdaxWebsocketMock = require('./gdax.websocket.mock');
 const GdaxHttpMock = require('./gdax.http.mock');
 const ticker = require('../../lib/ticker/ticker');
+const mongo = require('../../lib/ticker/db');
 
 describe('Ticker', function () {
+  describe('should execute only on trade trades', () => {
+    let wss, http, mongoIsDone;
+
+    const providers = {
+      'gdax': ['BTC-USD', 'ETH-USD', 'ETH-BTC']
+    };
+
+    beforeEach(done => {
+      // setup web socket (ticks)
+      wss = new GdaxWebsocketMock();
+
+      // setup mongo (orders)
+      mongoIsDone = new Promise((resolve, reject) => {
+        mongo.connect((err, db) => {
+          if(err) reject(err);
+          console.log('databse', db.databaseName);
+
+          db.dropDatabase((err, res) => {
+            if(err) { return reject(); }
+            resolve(res);
+          });
+        });
+      });
+
+      // setup amqp (orders)
+
+
+      // setup rest (gdax trades)
+      http = new GdaxHttpMock();
+
+      Promise.all([
+        wss.isConnected(),
+        http.isConnected(),
+        mongoIsDone
+      ]).then(() => { done(); })
+      .catch(done);
+    });
+
+    it('should get ticks', done => {
+      ticker(providers).subscribe(
+        data => {
+          // console.log('data', data);
+          setTimeout(function() {
+            done();
+          }, 200);
+        },
+        error => done(new Error(error))
+      );
+    });
+
+    afterEach(() => {
+      // tear down services
+      wss.close();
+      http.close();
+    });
+  });
+
   xdescribe('Provider market ticks', () => {
     // http://reactivex.io/rxjs/test-file/spec-js/observables/dom/webSocket-spec.js.html#lineNumber306
     // http://reactivex.io/rxjs/file/es6/observable/dom/WebSocketSubject.js.html#lineNumber92
@@ -82,47 +141,6 @@ describe('Ticker', function () {
       setTimeout(() => {
         amqp.client(JSON.stringify(orders));
       }, 10);
-    });
-  });
-
-  describe('should execute only on trade trades', () => {
-    let wss, http;
-
-    const providers = {
-      'gdax': ['BTC-USD', 'ETH-USD', 'ETH-BTC']
-    };
-
-    beforeEach(done => {
-      // setup web socket (ticks)
-      wss = new GdaxWebsocketMock();
-
-      // setup mongo (orders)
-      // setup amqp (orders)
-      // setup rest (gdax trades)
-      http = new GdaxHttpMock();
-
-      Promise.all([
-        wss.isConnected(),
-        http.isConnected()
-      ]).then(() => { done(); });
-    });
-
-    it('should get ticks', done => {
-      ticker(providers).subscribe(
-        data => {
-          // console.log('data', data);
-          setTimeout(function() {
-            done();
-          }, 200);
-        },
-        error => done(new Error(error))
-      );
-    });
-
-    afterEach(() => {
-      // tear down services
-      wss.close();
-      http.close();
     });
   });
 });

@@ -30,7 +30,8 @@ class GdaxWebsocketMock {
     this.t = setInterval(() => {
       price += (Math.random() * 10 - Math.random() * 7);
       const data = JSON.stringify({
-        "type": types[Math.floor(types.length * Math.random())],
+        // "type": types[Math.floor(types.length * Math.random())],
+        "type": "match",
         "trade_id": 18558088 + seq,
         "maker_order_id": uuid(),
         "taker_order_id": uuid(),
@@ -43,7 +44,7 @@ class GdaxWebsocketMock {
       });
       ws.send(data);
 
-    }, 100);
+    }, 15);
   }
 
   onMessage(ws) {

@@ -25,12 +25,13 @@
   },
   "scripts": {
     "test": "ENV=test mocha lib/**/*spec.js",
+    "watch": "ENV=test mocha --watch lib/**/*spec.js",
     "e2e": "ENV=test mocha test/e2e/{**/,}*{spec,e2e}.js",
+    "we2e": "ENV=test mocha --watch test/e2e/{**/,}*{spec,e2e}.js",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
     "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
     "precommit": "npm test",
     "prepush": "npm test",
-    "watch": "ENV=test mocha --watch lib/**/*spec.js",
     "heroku": "DEBUG=crybot:* DEBUG_DEPTH=6 DEBUG_HIDE_TTY_DATE=true heroku local"
   },
   "keywords": [],
