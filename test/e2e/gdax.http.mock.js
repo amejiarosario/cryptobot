@@ -11,8 +11,11 @@ const { accounts } = require('../responses/gdax');
 var options = {
   key: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.key'),
   cert: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.crt'),
-  requestCert: false,
-  rejectUnauthorized: false
+  // requestCert: false,
+  // rejectUnauthorized: false
+  ciphers: 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-SHA384',
+  honorCipherOrder: true,
+  secureProtocol: 'TLSv1_2_method'
 };
 
 class GdaxHttpMock {

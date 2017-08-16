@@ -32,7 +32,7 @@
     "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
     "precommit": "npm test",
     "prepush": "npm test",
-    "heroku": "DEBUG=crybot:* DEBUG_DEPTH=6 DEBUG_HIDE_TTY_DATE=true heroku local"
+    "heroku": "DEBUG='crybot:*' DEBUG_DEPTH=6 DEBUG_HIDE_TTY_DATE=true heroku local"
   },
   "keywords": [],
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",
