@@ -1,13 +1,16 @@
 const http = require('http');
 const https = require('https');
+const fs = require('fs');
+const debug = require('debug')('crybot:mock:http');
+
+
 const { accounts } = require('../responses/gdax');
-var fs = require('fs');
 
 // curl - k https://localhost:7777/accounts
 // https://www.akadia.com/services/ssh_test_certificate.html
 var options = {
-  key: fs.readFileSync('/Users/admejiar/scripts/certs/server.key'),
-  cert: fs.readFileSync('/Users/admejiar/scripts/certs/server.crt'),
+  key: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.key'),
+  cert: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.crt'),
   requestCert: false,
   rejectUnauthorized: false
 };
@@ -17,7 +20,7 @@ class GdaxHttpMock {
     this.promise = new Promise(resolve => {
       this.server = https.createServer(options, (request, response) => {
       // this.server = http.createServer((request, response) => {
-        console.log('request', request.method, request.url);
+        debug('request', request.method, request.url);
 
         const hasMatch = [
           this.getAccount(request, response),
@@ -29,7 +32,7 @@ class GdaxHttpMock {
           response.end();
         }
       }).listen(port, () => {
-        console.log(`HTTP listening on ${port}`);
+        debug(`HTTP listening on ${port}`);
         resolve(port);
       });
     });

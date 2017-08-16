@@ -9,13 +9,15 @@ const GdaxWebsocketMock = require('./gdax.websocket.mock');
 const GdaxHttpMock = require('./gdax.http.mock');
 const ticker = require('../../lib/ticker/ticker');
 const mongo = require('../../lib/ticker/db');
+const amqp = require('../../lib/messaging/amqp');
 
 describe('Ticker', function () {
   describe('should execute only on trade trades', () => {
     let wss, http, mongoIsDone;
 
     const providers = {
-      'gdax': ['BTC-USD', 'ETH-USD', 'ETH-BTC']
+      // 'gdax': ['BTC-USD', 'ETH-USD', 'ETH-BTC']
+      'gdax': ['BTC-USD']
     };
 
     beforeEach(done => {
@@ -31,6 +33,7 @@ describe('Ticker', function () {
           db.dropDatabase((err, res) => {
             if(err) { return reject(); }
             resolve(res);
+            db.close();
           });
         });
       });
@@ -42,9 +45,9 @@ describe('Ticker', function () {
       http = new GdaxHttpMock();
 
       Promise.all([
+        mongoIsDone,
         wss.isConnected(),
-        http.isConnected(),
-        mongoIsDone
+        http.isConnected()
       ]).then(() => { done(); })
       .catch(done);
     });
@@ -52,13 +55,23 @@ describe('Ticker', function () {
     it('should get ticks', done => {
       ticker(providers).subscribe(
         data => {
-          // console.log('data', data);
-          setTimeout(function() {
+          if(data.event !== 'tick') { console.log('events', data); }
+          else { console.log('tick', data.price); }
+
+          if(data.event === 'trade') {
             done();
-          }, 200);
+          }
         },
         error => done(new Error(error))
       );
+
+      // send order
+      const orderIsDone = amqp.client(JSON.stringify({
+        "gdax.BTC-USD": [
+          { "side": "sell", "target": 4270, "trailing": { "amount": 150 }, "trade": { "percentage": 0.8 } },
+          { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.5, "amount": 1000 } }
+        ]
+      }));
     });
 
     afterEach(() => {

@@ -1,11 +1,12 @@
 const WebSocket = require('ws');
 const uuid = require('uuid');
+const debug = require('debug')('crybot:mock:wss');
 
 class GdaxWebsocketMock {
   constructor({ port = 7771 } = {}) {
     this.promise = new Promise((resolve) => {
       this.wss = new WebSocket.Server({ port });
-      console.log('WSS on port', port);
+      debug('WSS on port', port);
       resolve(port);
 
       this.wss.on('connection', (ws) => {
@@ -23,12 +24,14 @@ class GdaxWebsocketMock {
 
   generateFakeMarketTicks(ws, products) {
     let seq = 0;
-    let price = 100;
+    let price = 4000;
     const side = ["buy", "sell"];
     const types = ["open", "match"];
 
     this.t = setInterval(() => {
-      price += (Math.random() * 10 - Math.random() * 7);
+      // price += (Math.random() * 10 - Math.random() * 7);
+      price += (Math.random() * 50 - Math.random() * 40);
+
       const data = JSON.stringify({
         // "type": types[Math.floor(types.length * Math.random())],
         "type": "match",
@@ -37,14 +40,14 @@ class GdaxWebsocketMock {
         "taker_order_id": uuid(),
         "side": side[Math.floor(side.length * Math.random())],
         "size": (Math.random()).toFixed(8),
-        "price": price,
+        "price": price.toFixed(4),
         "product_id": products[Math.floor(products.length * Math.random())],
         "sequence": (++seq),
         "time": new Date().toISOString()
       });
       ws.send(data);
 
-    }, 15);
+    }, 50);
   }
 
   onMessage(ws) {

@@ -10,7 +10,8 @@ const callback = require('../../lib/common/helper').callback;
 const key = process.env.GDAX_KEY;
 const b64secret = process.env.GDAX_SECRET;
 const passphrase = process.env.GDAX_PASSPHRASE;
-const apiURI = 'https://api.gdax.com';
+// const apiURI = 'https://api.gdax.com';
+const apiURI = 'https://localhost:7777';
 
 var authedClient = new Gdax.AuthenticatedClient(key, b64secret, passphrase, apiURI);
 // authedClient.getFundings({}, callback);
