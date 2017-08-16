@@ -1,11 +1,15 @@
 const sinon = require('sinon');
 const { expect, assert } = require('chai');
-// const { Server } = require('mock-socket');
 const WebSocket = require('ws');
 const { Observable } = require('rxjs/Rx');
+require('events').EventEmitter.prototype._maxListeners = 100;
+
+const GdaxWebsocketMock = require('./gdax.websocket.mock');
+const GdaxHttpMock = require('./gdax.http.mock');
+const ticker = require('../../lib/ticker/ticker');
 
 describe('Ticker', function () {
-  describe('Provider market ticks', () => {
+  xdescribe('Provider market ticks', () => {
     // http://reactivex.io/rxjs/test-file/spec-js/observables/dom/webSocket-spec.js.html#lineNumber306
     // http://reactivex.io/rxjs/file/es6/observable/dom/WebSocketSubject.js.html#lineNumber92
     xit('[non-mocked WSS] should subscribe for tick events from GDAX for BTC-USD and ETH-USD and only get matches', (done) => {
@@ -51,7 +55,7 @@ describe('Ticker', function () {
     });
   });
 
-  describe('Listen for orders', () => {
+  xdescribe('Listen for orders', () => {
     xit('[non-mocked AMQP] should add order events into the observable', done => {
       sinon.stub(gdax, 'tickerObservable').returns(Observable.never());
 
@@ -82,11 +86,43 @@ describe('Ticker', function () {
   });
 
   describe('should execute only on trade trades', () => {
-    beforeEach(() => {
+    let wss, http;
+
+    const providers = {
+      'gdax': ['BTC-USD', 'ETH-USD', 'ETH-BTC']
+    };
+
+    beforeEach(done => {
       // setup web socket (ticks)
+      wss = new GdaxWebsocketMock();
+
       // setup mongo (orders)
       // setup amqp (orders)
       // setup rest (gdax trades)
+      http = new GdaxHttpMock();
+
+      Promise.all([
+        wss.isConnected(),
+        http.isConnected()
+      ]).then(() => { done(); });
+    });
+
+    it('should get ticks', done => {
+      ticker(providers).subscribe(
+        data => {
+          // console.log('data', data);
+          setTimeout(function() {
+            done();
+          }, 200);
+        },
+        error => done(new Error(error))
+      );
+    });
+
+    afterEach(() => {
+      // tear down services
+      wss.close();
+      http.close();
     });
   });
 });
