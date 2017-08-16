@@ -26,8 +26,8 @@
   "scripts": {
     "test": "ENV=test mocha lib/**/*spec.js",
     "watch": "ENV=test mocha --watch lib/**/*spec.js",
-    "e2e": "ENV=test mocha test/e2e/{**/,}*{spec,e2e}.js",
-    "we2e": "ENV=test mocha --watch test/e2e/{**/,}*{spec,e2e}.js",
+    "e2e": "NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha test/e2e/{**/,}*{spec,e2e}.js",
+    "we2e": "NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --watch test/e2e/{**/,}*{spec,e2e}.js",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
     "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
     "precommit": "npm test",
