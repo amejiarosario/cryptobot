@@ -3,6 +3,10 @@ const https = require('https');
 const fs = require('fs');
 const debug = require('debug')('crybot:mock:http');
 
+const express = require('express');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+
 const { accounts } = require('../responses/gdax');
 
 // curl - k https://localhost:7777/accounts
@@ -26,26 +30,46 @@ var options = {
 class GdaxHttpMock {
   constructor({port = 7777} = {}) {
     this.promise = new Promise(resolve => {
-      this.server = https.createServer(options, (request, response) => {
-      // this.server = http.createServer((request, response) => {
-        debug('request', request.method, request.url);
+      this.app = this.getExpressApp();
 
-        const hasMatch = [
-          this.getAccount(request, response),
-          this.getEcho(request, response)
-        ].some(i => i);
-
-        if (!hasMatch) {
-          response.statusCode = 404;
-          response.end();
-        }
-      }).listen(port, () => {
+      this.server = https.createServer(options, this.app)
+      // this.server = https.createServer(options, this.requestHandler)
+      .listen(port, () => {
         debug(`HTTP listening on ${port}`);
         resolve(port);
       }).on('close', () => {
         debug('Closing HTTP server');
       });
+
     });
+  }
+
+  getExpressApp() {
+    const app = express();
+    app.use(bodyParser.json()); // for parsing application/json
+    app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+    app.use(morgan('dev')) // login
+
+    app.get('/accounts', (req, res) => {
+      res.json(accounts);
+    });
+
+    return app;
+  }
+
+  requestHandler(request, response) {
+    // this.server = http.createServer((request, response) => {
+    debug('request', request.method, request.url);
+
+    const hasMatch = [
+      this.getAccount(request, response),
+      this.getEcho(request, response)
+    ].some(i => i);
+
+    if (!hasMatch) {
+      response.statusCode = 404;
+      response.end();
+    }
   }
 
   isConnected() {

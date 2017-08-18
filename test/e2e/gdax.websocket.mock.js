@@ -22,6 +22,37 @@ class GdaxWebsocketMock {
     return this.promise;
   }
 
+  onMessage(ws) {
+    return message => {
+      message = JSON.parse(message);
+
+      if (message.type === 'subscribe') {
+        // this.generateFakeMarketTicks(ws, message.product_ids);
+        this.replayMarcketTicks(ws);
+      }
+    };
+  }
+
+  replayMarcketTicks(ws) {
+    const ticks = require('../responses/gdax.ticks');
+    let seq = 0;
+
+    this.t = setInterval(() => {
+      const data = (Object.assign({
+        sequence: seq,
+        product_id: 'BTC-USD',
+        type: 'match'
+      }, ticks[seq++]));
+      // console.log('data.tick', data);
+
+      ws.send(JSON.stringify(data));
+
+      if(seq === ticks.length - 1) {
+        clearInterval(this.t);
+      }
+    }, 5);
+  }
+
   generateFakeMarketTicks(ws, products) {
     let seq = 0;
     let price = 4000;
@@ -48,16 +79,6 @@ class GdaxWebsocketMock {
       ws.send(data);
 
     }, 50);
-  }
-
-  onMessage(ws) {
-    return message => {
-      message = JSON.parse(message);
-
-      if (message.type === 'subscribe') {
-        this.generateFakeMarketTicks(ws, message.product_ids);
-      }
-    };
   }
 
   close() {

@@ -56,7 +56,7 @@ describe('Ticker', function () {
       ticker(providers).subscribe(
         data => {
           if(data.event !== 'tick') { console.log('events', data); }
-          else { console.log('tick', data.price); }
+          // else { console.log('(e2e) tick', data.price); }
 
           if(data.event === 'trade') {
             done();
@@ -68,7 +68,7 @@ describe('Ticker', function () {
       // send order
       const orderIsDone = amqp.client(JSON.stringify({
         "gdax.BTC-USD": [
-          { "side": "sell", "target": 4270, "trailing": { "amount": 150 }, "trade": { "percentage": 0.8 } },
+          { "side": "sell", "target": 4328, "trailing": { "amount": 30 }, "trade": { "percentage": 0.8 } },
           { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.5, "amount": 1000 } }
         ]
       }));
@@ -78,6 +78,7 @@ describe('Ticker', function () {
       // tear down services
       wss.close();
       http.close();
+      // observable.unsubscribe();
     });
   });
 
