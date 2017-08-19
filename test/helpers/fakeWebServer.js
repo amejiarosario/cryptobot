@@ -4,9 +4,13 @@ class FakeWebSocket {
     this.url = url;
     // console.log('connecting to ' + url);
     this.open();
-    let i = 0;
-    this.id = setInterval(() => this.triggerEvent('message', i++), 15);
+    this.start();
     // console.log('FakeWebSocket::constructor');
+  }
+
+  start() {
+    let i = 0;
+    this.id = setInterval(() => this.triggerEvent('message', ++i), 15);
   }
 
   open() {
