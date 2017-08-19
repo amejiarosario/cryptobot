@@ -10,7 +10,7 @@ class FakeWebSocket {
 
   start() {
     let i = 0;
-    this.id = setInterval(() => this.triggerEvent('message', ++i), 15);
+    this.id = setInterval(() => this.triggerEvent('message', ++i), 10);
   }
 
   open() {
