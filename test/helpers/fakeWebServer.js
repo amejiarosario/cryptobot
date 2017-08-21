@@ -1,7 +1,8 @@
 /** A really, really, really fake websocket */
 class FakeWebSocket {
-  constructor(url) {
+  constructor({url, values} = {}) {
     this.url = url;
+    this.values = values;
     // console.log('connecting to ' + url);
     this.open();
     this.start();
@@ -10,7 +11,12 @@ class FakeWebSocket {
 
   start() {
     let i = 0;
-    this.id = setInterval(() => this.triggerEvent('message', ++i), 10);
+    const ms = 10;
+    if(this.values) {
+      this.id = setInterval(() => this.triggerEvent('message', this.values[++i]), ms);
+    } else {
+      this.id = setInterval(() => this.triggerEvent('message', ++i), ms);
+    }
   }
 
   open() {
@@ -52,16 +58,16 @@ class FakeWebSocket {
       const handlers = listeners[type];
       handlers.forEach(handler => handler({
         // target: this,
-        type: 'match', // received
-        order_id: '154556c9-c46b-4b3f-939c-5083a286fa41',
-        order_type: 'limit',
-        size: '0.20000000',
+        type: 'match',
+        trade_id: 17499723,
+        maker_order_id: '7031b122-c342-4b13-98f1-173539fe17a6',
+        taker_order_id: '42ba677f-2ed0-44c6-bc98-5750ff16f487',
+        side: 'buy',
+        size: '0.02000000',
         price: msg,
-        side: 'sell',
-        client_oid: '9db15138-8f44-4a46-8195-d59a8b38de46',
         product_id: 'BTC-USD',
-        sequence: 3864946233,
-        time: '2017-08-19T13:30:02.657000Z'
+        sequence: 3436653933,
+        time: '2017-06-27T21:27:16.802000Z'
       }));
     }
   }
