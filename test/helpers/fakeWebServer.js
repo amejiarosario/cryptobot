@@ -1,8 +1,9 @@
 /** A really, really, really fake websocket */
 class FakeWebSocket {
-  constructor({url, values} = {}) {
+  constructor({url, values, time = 10} = {}) {
     this.url = url;
     this.values = values;
+    this.time = time;
     // console.log('connecting to ' + url);
     this.open();
     this.start();
@@ -11,11 +12,10 @@ class FakeWebSocket {
 
   start() {
     let i = 0;
-    const ms = 10;
     if(this.values) {
-      this.id = setInterval(() => this.triggerEvent('message', this.values[++i]), ms);
+      this.id = setInterval(() => this.triggerEvent('message', this.values[i >= this.values.length ? i - 1 : ++i]), this.time);
     } else {
-      this.id = setInterval(() => this.triggerEvent('message', ++i), ms);
+      this.id = setInterval(() => this.triggerEvent('message', ++i), this.time);
     }
   }
 
