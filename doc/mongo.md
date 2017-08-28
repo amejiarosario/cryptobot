@@ -1,15 +1,15 @@
 # cloud mongos
-- ds151232.mlab.com:51232/heroku_2frz56zq
-- ds145639.mlab.com:45639/heroku_k9c7jrsc
+- ds151232.mlab.com:51232/heroku_2frz56zq (current)
+- ds145639.mlab.com:45639/heroku_k9c7jrsc (empty)
 
 # Backup Database
 
 ```sh
 # backup
-mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/aggregated
+mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data
 
 # import backup
-mongorestore -h localhost:27017 -d aggregated data/aggregated/*
+mongorestore -h localhost:27017 -d heroku_2frz56zq data/heroku_2frz56zq/
 ```
 
 # backup JSON
