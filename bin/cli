@@ -3,6 +3,4 @@
 const cli = require('../lib/cli/cli');
 const program = cli();
 
-console.log('process.argv', process.argv);
-
 program.parse(process.argv);
