@@ -24,6 +24,11 @@ let config = {
   amqp: {
     url: process.env.CLOUDAMQP_URL || 'amqp://localhost',
     queue: process.env.AMQP_QUEUE || 'localbot2'
+  },
+
+  ticker: {
+    providers: process.env.TICKER_PROVIDERS || '{"gdax": ["BTC-USD", "ETH-USD", "LTC-USD"]}',
+    modifiers: process.env.TICKER_MODIFIERS || '{"bufferTime": 10000}'
   }
 };
 
