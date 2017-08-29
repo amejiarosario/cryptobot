@@ -27,8 +27,8 @@ let config = {
   },
 
   ticker: {
-    providers: process.env.TICKER_PROVIDERS || '{"gdax": ["BTC-USD", "ETH-USD", "LTC-USD"]}',
-    modifiers: process.env.TICKER_MODIFIERS || '{"bufferTime": 10000}'
+    providers: process.env.CRYBOT_TICKER_PROVIDERS || '{"gdax": ["BTC-USD", "ETH-USD", "LTC-USD"]}',
+    modifiers: process.env.CRYBOT_TICKER_MODIFIERS || '{"bufferTime": 10000}'
   }
 };
 
