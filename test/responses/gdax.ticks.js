@@ -76,7 +76,6 @@ module.exports = [
   { time: new Date('Aug 16 16:53:52').toISOString(), price: 4348.31, side: 'buy', size: 0.1 },
   { time: new Date('Aug 16 16:53:52').toISOString(), price: 4348.32, side: 'buy', size: 0.1 },
   { time: new Date('Aug 16 16:53:57').toISOString(), price: 4349, side: 'buy', size: 0.1 },
-
   { time: new Date('Aug 16 17:14:00').toISOString(), price: 4313.62, side: 'buy', size: 0.1 },
   { time: new Date('Aug 16 17:14:00').toISOString(), price: 4313.62, side: 'buy', size: 0.1 },
   { time: new Date('Aug 16 17:14:00').toISOString(), price: 4311.91, side: 'buy', size: 0.1 },

@@ -7,11 +7,13 @@ require('events').EventEmitter.prototype._maxListeners = 100;
 
 const GdaxWebsocketMock = require('./gdax.websocket.mock');
 const GdaxHttpMock = require('./gdax.http.mock');
-const ticker = require('../../lib/ticker/ticker');
+const { Ticker } = require('../../lib/ticker/ticker');
 const mongo = require('../../lib/ticker/db');
 const amqp = require('../../lib/messaging/amqp');
 
 describe('Ticker', function () {
+  let ticker;
+
   describe('should execute only on trade trades', () => {
     let wss, http, mongoIsDone;
 
@@ -48,15 +50,20 @@ describe('Ticker', function () {
         mongoIsDone,
         wss.isConnected(),
         http.isConnected()
-      ]).then(() => { done(); })
-      .catch(done);
+      ])
+      .then(() => { done(); })
+      .catch(error => {
+        done(error.stack);
+      });
     });
 
     it('should get ticks', done => {
-      ticker(providers).subscribe(
+      ticker = new Ticker(providers);
+
+      ticker.subscribe(
         data => {
           if(data.event !== 'tick') { console.log('events', data); }
-          // else { console.log('(e2e) tick', data.price); }
+          else { console.log('(e2e) tick', data.tick.price); }
 
           if(data.event === 'trade') {
             done();
@@ -65,19 +72,27 @@ describe('Ticker', function () {
         error => done(new Error(error))
       );
 
-      // send order
-      const orderIsDone = amqp.client(JSON.stringify({
-        "gdax.BTC-USD": [
-          { "side": "sell", "target": 4328, "trailing": { "amount": 30 }, "trade": { "percentage": 0.8 } },
-          { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.5, "amount": 1000 } }
-        ]
-      }));
+      setTimeout(function() {
+        // send order
+        const orderIsDone = amqp.client(JSON.stringify({
+          "gdax.BTC-USD": [
+            { "side": "sell", "target": 4325, "trailing": { "amount": 5 }, "trade": { "percentage": 0.8 } },
+            { "side": "buy", "target": 1000 },
+            { "side": "sell", "target": 5000, "trailing": { "amount": 5 } },
+            { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.5, "amount": 1000 } }
+          ]
+        }), (err, data) => {
+          console.log('order sent', data);
+        });
+      }, 100);
+
     });
 
     afterEach(() => {
       // tear down services
       wss.close();
       http.close();
+      ticker.unsubscribe();
       // observable.unsubscribe();
     });
   });
