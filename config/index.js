@@ -10,7 +10,7 @@ let config = {
   },
 
   db: {
-    uri: process.env.MONGODB_URI || process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost:27017/localbot2'
+    uri: process.env.MONGODB_URI || process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost:27017/crylocal'
   },
 
   web: {
@@ -23,7 +23,7 @@ let config = {
 
   amqp: {
     url: process.env.CLOUDAMQP_URL || 'amqp://localhost',
-    queue: process.env.AMQP_QUEUE || 'localbot2'
+    queue: process.env.AMQP_QUEUE || 'cryqueue'
   },
 
   ticker: {

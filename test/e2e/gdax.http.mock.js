@@ -17,7 +17,8 @@ var options = {
   key: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.key'),
   cert: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.crt'),
   requestCert: false,
-  rejectUnauthorized: false
+  rejectUnauthorized: false,
+  ciphers: 'DES-CBC3-SHA' // https://github.com/nodejs/node/issues/9845#issuecomment-264032107
 
   // ciphers: 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-SHA384',
   // honorCipherOrder: true,
@@ -27,32 +28,59 @@ var options = {
   // rejectUnauthorized: true
 };
 
+// https://github.com/nodejs/node/issues/13461
 class GdaxHttpMock {
   constructor({port = 7777} = {}) {
     this.promise = new Promise(resolve => {
-      this.app = this.getExpressApp();
+      // const app = this.getExpressApp();
+      const app = express();
+      app.use((req, res, next) => {
+        debug(`------- something ------------------------`);
+      });
 
-      this.server = https.createServer(options, this.app)
+      this.server = https.createServer(options, (req, res) => {
+        debug(`------- something ------------------------`);
+      })
+      // this.server = https.createServer(options, app)
       // this.server = https.createServer(options, this.requestHandler)
       .listen(port, () => {
         debug(`HTTP listening on ${port}`);
         resolve(port);
+        // setTimeout(function() {
+        //   resolve(port);
+        // }, 2000);
       }).on('close', () => {
         debug('Closing HTTP server');
+      }).on('clientError', (err, socket) => {
+        // debug(`------- something ------------------------ %o`, socket);
+        // debug('parser error', err.code);
+        // socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+        // get request and do something with it...
       });
-
     });
   }
 
   getExpressApp() {
     const app = express();
-    app.use(bodyParser.json()); // for parsing application/json
-    app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-    app.use(morgan('dev')) // login
+    // app.use(bodyParser.json()); // for parsing application/json
+    // app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+    app.use(morgan('dev', {
+      stream: debug
+    })); // login
 
     app.get('/accounts', (req, res) => {
       res.json(accounts);
     });
+
+    // app.use(function (req, res, next) {
+    //   req.socket.on("error", function (error) {
+    //     debug(`Socket error: `, error)
+    //   });
+    //   res.socket.on("error", function (error) {
+    //     debug(`Socket error: `, error)
+    //   });
+    //   next();
+    // });
 
     return app;
   }

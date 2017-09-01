@@ -7,13 +7,20 @@ const callback = require('../../lib/common/helper').callback;
 
 // ---------------
 
-const key = process.env.GDAX_KEY;
-const b64secret = process.env.GDAX_SECRET;
-const passphrase = process.env.GDAX_PASSPHRASE;
+// const key = process.env.GDAX_KEY;
+// const b64secret = process.env.GDAX_SECRET;
+// const passphrase = process.env.GDAX_PASSPHRASE;
 // const apiURI = 'https://api.gdax.com';
-const apiURI = 'https://localhost:7777';
+// const apiURI = 'https://localhost:7777';
+
+const key = process.env.GDAX_SANDBOX_KEY;
+const b64secret = process.env.GDAX_SANDBOX_SECRET;
+const passphrase = process.env.GDAX_SANDBOX_PASSPHRASE;
+const apiURI = 'https://api-public.sandbox.gdax.com';
 
 var authedClient = new Gdax.AuthenticatedClient(key, b64secret, passphrase, apiURI);
+
+authedClient.getCoinbaseAccounts(callback);
 // authedClient.getFundings({}, callback);
 authedClient.getAccounts(callback);
 

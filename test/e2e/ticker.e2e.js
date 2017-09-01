@@ -34,8 +34,10 @@ describe('Ticker', function () {
 
           db.dropDatabase((err, res) => {
             if(err) { return reject(); }
-            resolve(res);
-            db.close();
+            db.close((e, r) => {
+              console.log(`Closed database ${r}. Errors ${e}`);
+              resolve(res);
+            });
           });
         });
       });
@@ -57,14 +59,21 @@ describe('Ticker', function () {
       });
     });
 
+    afterEach(() => {
+      // tear down services
+      wss.close();
+      http.close();
+      ticker.unsubscribe();
+      // observable.unsubscribe();
+    });
+
     it('should get ticks', done => {
       ticker = new Ticker(providers);
 
       ticker.subscribe(
         data => {
-          if(data.event !== 'tick') { console.log('events', data); }
-          else { console.log('(e2e) tick', data.tick.price); }
-
+          // if(data.event !== 'tick') { console.log('events', data); }
+          // else { console.log('(e2e) tick', data.tick.price); }
           if(data.event === 'trade') {
             done();
           }
@@ -74,7 +83,7 @@ describe('Ticker', function () {
 
       setTimeout(function() {
         // send order
-        const orderIsDone = amqp.client(JSON.stringify({
+        amqp.client(JSON.stringify({
           "gdax.BTC-USD": [
             { "side": "sell", "target": 4325, "trailing": { "amount": 5 }, "trade": { "percentage": 0.8 } },
             { "side": "buy", "target": 1000 },
@@ -84,16 +93,7 @@ describe('Ticker', function () {
         }), (err, data) => {
           console.log('order sent', data);
         });
-      }, 100);
-
-    });
-
-    afterEach(() => {
-      // tear down services
-      wss.close();
-      http.close();
-      ticker.unsubscribe();
-      // observable.unsubscribe();
+      }, 10);
     });
   });
 
