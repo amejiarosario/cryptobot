@@ -93,9 +93,9 @@ describe('Ticker', function () {
         amqp.client(JSON.stringify({
           "gdax.BTC-USD": [
             { "side": "sell", "target": 4325, "trailing": { "amount": 5 }, "trade": { "amount": 1 } },
-            { "side": "buy", "target": 1000 },
-            { "side": "sell", "target": 5000, "trailing": { "amount": 5 }, trade: { percentage: 0.1 } },
-            { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.1, "amount": 1 } }
+            { "side": "buy", "target": 1000, trade: { percentage: 0.01 } },
+            { "side": "sell", "target": 5000, "trailing": { "amount": 5 }, trade: { percentage: 0.01 } },
+            { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.01, "amount": 100 } }
           ]
         }), (err, data) => {
           console.log('order sent', data);
