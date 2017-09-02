@@ -20,8 +20,11 @@ const apiURI = 'https://api-public.sandbox.gdax.com';
 
 var authedClient = new Gdax.AuthenticatedClient(key, b64secret, passphrase, apiURI);
 
+console.log('authedClient.getCoinbaseAccounts:');
 authedClient.getCoinbaseAccounts(callback);
 // authedClient.getFundings({}, callback);
+
+console.log('authedClient.getAccounts:');
 authedClient.getAccounts(callback);
 
 // authedClient.getAccounts(callback);
@@ -51,6 +54,143 @@ authedClient.getAccounts(callback);
     available: '0.0000000000000000',
     hold: '0.0000000000000000',
     profile_id: 'f9de7517-451e-4c71-b794-db525d0890b8' } ]
+*/
+
+/* Sandbox
+authedClient.getCoinbaseAccounts
+[
+  {
+    "id": "95671473-4dda-5264-a654-fc6923e8a334",
+    "name": "Fake",
+    "balance": "50.00000000",
+    "currency": "BTC",
+    "type": "wallet",
+    "primary": true,
+    "active": true
+  },
+  {
+    "id": "95671473-4dda-5264-a654-fc6923e8a335",
+    "name": "All the Ether",
+    "balance": "1000.00000000",
+    "currency": "ETH",
+    "type": "wallet",
+    "primary": false,
+    "active": true
+  },
+  {
+    "id": "95671473-4dda-5264-a654-fc6923e8a336",
+    "name": "Satoshi Lite",
+    "balance": "100000.00000000",
+    "currency": "LTC",
+    "type": "wallet",
+    "primary": false,
+    "active": true
+  },
+  {
+    "id": "bcdd4c40-df40-5d76-810c-74aab722b223",
+    "name": "USD Wallet",
+    "balance": "10480.00000000",
+    "currency": "USD",
+    "type": "fiat",
+    "primary": false,
+    "active": true,
+    "wire_deposit_information": {
+      "account_number": "12345678912",
+      "routing_number": "1234567",
+      "bank_name": "Coinbase Test Bank",
+      "bank_address": "1 Test Bank Drive, Nowhere",
+      "bank_country": {
+        "code": "US",
+        "name": "United States"
+      },
+      "account_name": "Coinbase, Inc",
+      "account_address": "548 Market Street, #23008, San Francisco, CA 94104",
+      "reference": "TESTREFERENCE"
+    }
+  },
+  {
+    "id": "47f515a1-f035-5ce1-9c68-1a986548ee15",
+    "name": "EUR Wallet",
+    "balance": "10480.00000000",
+    "currency": "EUR",
+    "type": "fiat",
+    "primary": false,
+    "active": true,
+    "sepa_deposit_information": {
+      "iban": "EE957700771001355096",
+      "swift": "LHVBEE22",
+      "bank_name": "AS LHV Pank",
+      "bank_address": "Tartu mnt 2, 10145 Tallinn, Estonia",
+      "bank_country_name": "Estonia",
+      "account_name": "Coinbase UK, Ltd.",
+      "account_address": "9th Floor, 107 Cheapside, London, EC2V 6DN, United Kingdom",
+      "reference": "CBAEUROVFXOMYXEXC"
+    }
+  },
+  {
+    "id": "eafc4cb3-600c-5ba1-b9be-b693e7acce52",
+    "name": "GBP Wallet",
+    "balance": "10480.00000000",
+    "currency": "GBP",
+    "type": "fiat",
+    "primary": false,
+    "active": true
+  },
+  {
+    "id": "24df678d-809e-5332-8170-f3048e2908f2",
+    "name": "Zero Hero",
+    "balance": "0.00000000",
+    "currency": "USD",
+    "type": "fiat",
+    "primary": false,
+    "active": true
+  }
+]
+
+
+authedClient.getAccounts
+[
+  {
+    "id": "2de562d6-8916-406a-b6b0-6dff4e90bcac",
+    "currency": "BTC",
+    "balance": "2.4452645700000000",
+    "available": "1.0442055100000000",
+    "hold": "1.4010590600000000",
+    "profile_id": "14282daa-4446-4b0e-af3d-5137b32a004b"
+  },
+  {
+    "id": "08f5fb3a-8186-4213-9355-1b54a8e8f07f",
+    "currency": "USD",
+    "balance": "1030.9483793104750000",
+    "available": "1030.9483793104750000",
+    "hold": "0.0000000000000000",
+    "profile_id": "14282daa-4446-4b0e-af3d-5137b32a004b"
+  },
+  {
+    "id": "54c3c4d7-d350-4413-87cd-b82f0088f853",
+    "currency": "GBP",
+    "balance": "0.0000000000000000",
+    "available": "0.0000000000000000",
+    "hold": "0.0000000000000000",
+    "profile_id": "14282daa-4446-4b0e-af3d-5137b32a004b"
+  },
+  {
+    "id": "5e3d74b7-21fc-4aea-b535-92183271793f",
+    "currency": "EUR",
+    "balance": "0.0000000000000000",
+    "available": "0.0000000000000000",
+    "hold": "0.0000000000000000",
+    "profile_id": "14282daa-4446-4b0e-af3d-5137b32a004b"
+  },
+  {
+    "id": "caf9e12b-8b37-4e19-89a7-333f92d0b15e",
+    "currency": "CAD",
+    "balance": "0.0000000000000000",
+    "available": "0.0000000000000000",
+    "hold": "0.0000000000000000",
+    "profile_id": "14282daa-4446-4b0e-af3d-5137b32a004b"
+  }
+]
 */
 
 // const usdAccount = '328cbc77-321c-44c9-9e30-cea1f8248d85';

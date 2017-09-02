@@ -68,6 +68,7 @@ describe('Ticker', function () {
     });
 
     it('should get ticks', done => {
+      let trades = 0;
       ticker = new Ticker(providers);
 
       ticker.subscribe(
@@ -75,20 +76,26 @@ describe('Ticker', function () {
           // if(data.event !== 'tick') { console.log('events', data); }
           // else { console.log('(e2e) tick', data.tick.price); }
           if(data.event === 'trade') {
-            done();
+            trades++;
           }
         },
         error => done(new Error(error))
       );
 
+
+      setTimeout(function() {
+        expect(trades).to.equal(4);
+        done();
+      }, 1500);
+
       setTimeout(function() {
         // send order
         amqp.client(JSON.stringify({
           "gdax.BTC-USD": [
-            { "side": "sell", "target": 4325, "trailing": { "amount": 5 }, "trade": { "percentage": 0.8 } },
+            { "side": "sell", "target": 4325, "trailing": { "amount": 5 }, "trade": { "amount": 1 } },
             { "side": "buy", "target": 1000 },
-            { "side": "sell", "target": 5000, "trailing": { "amount": 5 } },
-            { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.5, "amount": 1000 } }
+            { "side": "sell", "target": 5000, "trailing": { "amount": 5 }, trade: { percentage: 0.1 } },
+            { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.1, "amount": 1 } }
           ]
         }), (err, data) => {
           console.log('order sent', data);

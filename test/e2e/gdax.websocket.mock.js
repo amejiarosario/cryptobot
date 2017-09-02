@@ -10,9 +10,11 @@ class GdaxWebsocketMock {
       resolve(port);
 
       this.wss.on('connection', (ws) => {
+        this._ws = ws;
         ws.on('message', this.onMessage(ws));
         ws.on('close', () => {
           if (this.t) { clearInterval(this.t); }
+          this._ws = null;
         });
       });
     });
@@ -25,12 +27,20 @@ class GdaxWebsocketMock {
   onMessage(ws) {
     return message => {
       message = JSON.parse(message);
+      debug(`got message: %o`, message);
 
       if (message.type === 'subscribe') {
         // this.generateFakeMarketTicks(ws, message.product_ids);
         this.replayMarcketTicks(ws);
       }
     };
+  }
+
+  reset() {
+    if(this._ws) {
+      if(this.t) clearInterval(this.t);
+      replayMarcketTicks(this._ws);
+    }
   }
 
   replayMarcketTicks(ws) {
