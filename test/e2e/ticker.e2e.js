@@ -11,7 +11,7 @@ const { Ticker } = require('../../lib/ticker/ticker');
 const mongo = require('../../lib/ticker/db');
 const amqp = require('../../lib/messaging/amqp');
 
-describe('Ticker', function () {
+describe('Ticker (e2e)', function () {
   let ticker;
 
   describe('should execute only on trade trades', () => {
