@@ -10,16 +10,18 @@ const GdaxHttpMock = require('./gdax.http.mock');
 const { Ticker } = require('../../lib/ticker/ticker');
 const mongo = require('../../lib/ticker/db');
 const amqp = require('../../lib/messaging/amqp');
+const TIMEOUT = 30e3;
 
 describe('Ticker (e2e)', function () {
+  this.timeout(TIMEOUT);
   let ticker;
 
   describe('should execute only on trade trades', () => {
     let wss, http, mongoIsDone;
 
     const providers = {
-      // 'gdax': ['BTC-USD', 'ETH-USD', 'ETH-BTC']
-      'gdax': ['BTC-USD']
+      'gdax': ['BTC-USD', 'ETH-USD', 'ETH-BTC']
+      // 'gdax': ['BTC-USD']
     };
 
     beforeEach(done => {
@@ -46,12 +48,12 @@ describe('Ticker (e2e)', function () {
 
 
       // setup rest (gdax trades)
-      http = new GdaxHttpMock();
+      // http = new GdaxHttpMock();
 
       Promise.all([
         mongoIsDone,
         wss.isConnected(),
-        http.isConnected()
+        // http.isConnected()
       ])
       .then(() => { done(); })
       .catch(error => {
@@ -62,7 +64,7 @@ describe('Ticker (e2e)', function () {
     afterEach(() => {
       // tear down services
       wss.close();
-      http.close();
+      // http.close();
       ticker.unsubscribe();
       // observable.unsubscribe();
     });
@@ -77,16 +79,20 @@ describe('Ticker (e2e)', function () {
           // else { console.log('(e2e) tick', data.tick.price); }
           if(data.event === 'trade') {
             trades++;
+            // console.log('>>> trades', trades);
+            expect(parseFloat(data.result.size)).to.be.lessThan(1);
+          }
+
+          if(trades === 3) {
+            done();
           }
         },
         error => done(new Error(error))
       );
-
-
-      setTimeout(function() {
-        expect(trades).to.equal(4);
-        done();
-      }, 1500);
+      // setTimeout(function() {
+      //   expect(trades).to.equal(4);
+      //   done();
+      // }, TIMEOUT);
 
       setTimeout(function() {
         // send order
