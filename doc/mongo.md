@@ -1,6 +1,12 @@
 # cloud mongos
 - ds151232.mlab.com:51232/heroku_2frz56zq (current)
+*   mongo ds151232.mlab.com:51232/heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp
+*   mongodb://heroku_2frz56zq:dlpne93p29659v6esqcne5unrp@ds151232.mlab.com:51232/heroku_2frz56zq
 - ds145639.mlab.com:45639/heroku_k9c7jrsc (empty)
+- 104.131.94.76:27017/crydb
+*  mongo 104.131.94.76:27017/crydb -u cryuser -p cryP@ssw0rd!
+*  mongo 104.131.94.76:27017/crydb -u crybot -p CrySkittles123
+*  mongodb://crybot:CrySkittles123@104.131.94.76:27017/crydb
 
 # Backup Database
 

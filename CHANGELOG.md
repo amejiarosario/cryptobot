@@ -1,9 +1,12 @@
 # 3.0.x
 
 Features:
+  - [ ] Avoid buy fees! Options: 1) Add +/- 0.3% to order price. Taker fees: Gdax 0.25 %; Kraken 0.26%;  Poloniex 0.25%
+  - [ ] Cleanup trading logs (remove duplicates)
   - [ ] Save funds on db. Before trades are made funds are updated save those and get them on reload
 
 Issues:
+  - [ ] When restarting in heroku the Websocket continues to listen rather than stopping
   - [x] Cancelling an order can make them execute immdiately if trailing is not passed. Do not set orders (trailingOrders) if they are not open
   - [x] (low) Trigger events were logged multiple times. Because it didn't remove the listener
   - [x] Heroku reloads every 24h, so triggered trailing orders are lost when the system restart. Save trigger info to DB so when the app is reloaded it has the info.
