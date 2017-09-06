@@ -1,7 +1,7 @@
-# 3.0.x
+# 3.x
 
 Features:
-  - [ ] Avoid buy fees! Options: 1) Add +/- 0.3% to order price. Taker fees: Gdax 0.25 %; Kraken 0.26%;  Poloniex 0.25%
+  - [x] Avoid buy fees! Add +/- 0.3% to order price. Taker fees: Gdax 0.25 %; Kraken 0.26%;  Poloniex 0.25%
   - [ ] Cleanup trading logs (remove duplicates)
   - [ ] Save funds on db. Before trades are made funds are updated save those and get them on reload
 
