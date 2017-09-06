@@ -15,7 +15,7 @@
 mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data
 
 # import backup
-mongorestore -h localhost:27017 -d heroku_2frz56zq data/heroku_2frz56zq/
+mongorestore -h localhost:27017 -d crybackup data/heroku_2frz56zq/
 ```
 
 # backup JSON
@@ -26,8 +26,8 @@ mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u h
 mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c eth-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/eth-usd-ticker.json
 
 # import data # mongoimport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c <collection> -u <user> -p <password> --file <input file>
-mongoimport -h localhost:27017 -d localbot4 -c btc-usd-ticker --file data/btc-usd-ticker.json
-mongoimport -h localhost:27017 -d localbot4 -c eth-usd-ticker --file data/eth-usd-ticker.json
+mongoimport -h localhost:27017 -d crybackup -c btc-usd-ticker --file data/btc-usd-ticker.json
+mongoimport -h localhost:27017 -d crybackup -c eth-usd-ticker --file data/eth-usd-ticker.json
 ```
 # Notes
 
