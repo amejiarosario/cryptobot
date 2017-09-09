@@ -15,8 +15,9 @@ let config = {
 
   amqp: {
     url: process.env.CLOUDAMQP_URL || 'amqp://localhost',
-    queue: process.env.AMQP_QUEUE || 'cryqueue-test'
-  },
+    rpcQueue: process.env.AMQP_RPC_QUEUE || 'cryRpcQueue-test',
+    simpleQueue: process.env.AMQP_SIMPLE_QUEUE || 'crySimpleQueue-test'
+  }
 };
 
 module.exports = config;

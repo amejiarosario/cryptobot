@@ -27,16 +27,19 @@
     "ws": "3.1.0"
   },
   "scripts": {
+    "preinstall": "npm install pm2 -g",
     "test": "ENV=test mocha lib/**/*spec.js",
+    "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
+
+    "precommit": "npm test",
+    "prepush": "npm run allTests",
+
     "watch": "ENV=test mocha --watch lib/**/*spec.js",
     "e2e": "DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha test/e2e/{**/,}*{spec,e2e}.js",
     "we2e": "DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --watch test/e2e/{**/,}*{spec,e2e}.js",
     "ce2e": "DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test nyc --reporter=html --reporter=text mocha test/e2e/{**/,}*{spec,e2e}.js",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
-    "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
     "allTests": "ENV=test nyc --reporter=html --reporter=text --reporter=text-summary --per-file --lines 80 mocha lib/**/*spec.js test/e2e/{**/,}*{spec,e2e}.js",
-    "precommit": "npm test",
-    "prepush": "npm run allTests",
     "heroku": "DEBUG='crybot:*' DEBUG_DEPTH=6 DEBUG_HIDE_TTY_DATE=true heroku local",
     "deploy": "git push heroku master && git push web master"
   },
