@@ -422,3 +422,110 @@ const twss = 'wss://ws-feed-public.sandbox.gdax.com';
     ...
   ]
 */
+
+/*
+Websocket ticker
+  ```js
+{ type: 'received',
+  order_id: 'e99e1a38-be4f-433d-8341-a5ec70d431a5',
+  order_type: 'limit',
+  size: '0.09199000',
+  price: '2583.88000000',
+  side: 'sell',
+  product_id: 'BTC-USD',
+  sequence: 3510553182,
+  time: '2017-07-06T16:00:12.075000Z' }
+
+{ type: 'received',
+  order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
+  order_type: 'market',
+  size: '0.16730000',
+  side: 'buy',
+  funds: '432.2831240000000000',
+  product_id: 'BTC-USD',
+  sequence: 3510553461,
+  time: '2017-07-06T16:00:15.098000Z' }
+
+// remaining: 0.07531 (0.1673 - 0.09199)
+{ type: 'match',
+  trade_id: 17783459,
+  maker_order_id: 'e99e1a38-be4f-433d-8341-a5ec70d431a5',
+  taker_order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
+  side: 'sell',
+  size: '0.09199000',
+  price: '2583.88000000',
+  product_id: 'BTC-USD',
+  sequence: 3510553462,
+  time: '2017-07-06T16:00:15.098000Z' }
+
+{ type: 'done',
+  side: 'sell',
+  order_id: 'e99e1a38-be4f-433d-8341-a5ec70d431a5',
+  reason: 'filled',
+  product_id: 'BTC-USD',
+  price: '2583.88000000',
+  remaining_size: '0.00000000',
+  sequence: 3510553463,
+  time: '2017-07-06T16:00:15.098000Z' }
+
+{ type: 'done',
+  side: 'buy',
+  order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
+  reason: 'filled',
+  product_id: 'BTC-USD',
+  remaining_size: '0.00000000',
+  sequence: 3510553465,
+  time: '2017-07-06T16:00:15.098000Z' }
+
+// Another match
+
+{ type: 'received',
+  order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
+  order_type: 'limit',
+  size: '0.09787000',
+  price: '2583.88000000',
+  side: 'sell',
+  product_id: 'BTC-USD',
+  sequence: 3510553445,
+  time: '2017-07-06T16:00:14.023000Z' }
+
+{ type: 'open',
+  side: 'sell',
+  price: '2583.88000000',
+  order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
+  remaining_size: '0.09787000',
+  product_id: 'BTC-USD',
+  sequence: 3510553446,
+  time: '2017-07-06T16:00:14.023000Z' }
+
+{ type: 'match',
+  trade_id: 17783460,
+  maker_order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
+  taker_order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
+  side: 'sell',
+  size: '0.07531000',
+  price: '2583.88000000',
+  product_id: 'BTC-USD',
+  sequence: 3510553464,
+  time: '2017-07-06T16:00:15.098000Z' }
+
+{ type: 'done',
+  side: 'buy',
+  order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
+  reason: 'filled',
+  product_id: 'BTC-USD',
+  remaining_size: '0.00000000',
+  sequence: 3510553465,
+  time: '2017-07-06T16:00:15.098000Z' }
+
+{ type: 'done',
+  side: 'sell',
+  order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
+  reason: 'canceled',
+  product_id: 'BTC-USD',
+  price: '2583.88000000',
+  remaining_size: '0.02256000',
+  sequence: 3510554226,
+  time: '2017-07-06T16:00:20.120000Z' }
+
+  */

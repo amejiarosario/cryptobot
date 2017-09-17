@@ -33,7 +33,7 @@ let config = {
   },
 
   analyzer: {
-    strategy: process.env.CRYBOT_ANALYZER_STRATEGY || 'weeklyClose'
+    strategy: process.env.CRYBOT_ANALYZER_STRATEGY || 'weekly-close-diff'
   }
 };
 

@@ -6,16 +6,23 @@
 - 104.131.94.76:27017/crydb
 *  mongo 104.131.94.76:27017/crydb -u cryuser -p cryP@ssw0rd!
 *  mongo 104.131.94.76:27017/crydb -u crybot -p CrySkittles123
-*  mongodb://crybot:CrySkittles123@104.131.94.76:27017/crydb
+*  mongodb://cryuser:CrySkittles123@104.131.94.76:27017/crydb
+*  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186/crydb
 
 # Backup Database
 
 ```sh
 # backup
 mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data
+mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data
+
+mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data/mongodb-512mb-nyc3-01/
+mongodump --db crybot2 -o data/crybot2/
 
 # import backup
-mongorestore -h localhost:27017 -d crybackup data/heroku_2frz56zq/
+mongorestore -h localhost:27017 -d crybackup2 data/heroku_2frz56zq/
+mongorestore -h localhost:27017 -d crybackup3 data/mongodb-512mb-nyc3-01/crydb/
+
 ```
 
 # backup JSON
@@ -26,8 +33,20 @@ mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u h
 mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c eth-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/eth-usd-ticker.json
 
 # import data # mongoimport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c <collection> -u <user> -p <password> --file <input file>
-mongoimport -h localhost:27017 -d crybackup -c btc-usd-ticker --file data/btc-usd-ticker.json
-mongoimport -h localhost:27017 -d crybackup -c eth-usd-ticker --file data/eth-usd-ticker.json
+
+mongoimport -d crybackup2 -c eth-usd-ticker --file data/eth-usd-ticker.json
+mongoimport -d crybackup2 -c gdax.eth-usd-months --file data/eth-usd-months.json
+mongoimport -d crybackup2 -c gdax.eth-usd-weeks --file data/eth-usd-weeks.json
+mongoimport -d crybackup2 -c gdax.eth-usd-days --file data/eth-usd-days.json
+mongoimport -d crybackup2 -c gdax.eth-usd-hours --file data/eth-usd-hours.json
+mongoimport -d crybackup2 -c gdax.eth-usd-minutes --file data/eth-usd-minutes.json
+
+mongoimport -d crybackup2 -c gdax.btc-usd-months --file data/btc-usd-months.json
+mongoimport -d crybackup2 -c gdax.btc-usd-weeks --file data/btc-usd-weeks.json
+mongoimport -d crybackup2 -c gdax.btc-usd-days --file data/btc-usd-days.json
+mongoimport -d crybackup2 -c gdax.btc-usd-hours --file data/btc-usd-hours.json
+mongoimport -d crybackup2 -c gdax.btc-usd-minutes --file data/btc-usd-minutes.json
+
 ```
 # Notes
 
@@ -139,113 +158,6 @@ Orderbook (Market depth)
   - sell orders volume & limits
   - buy orders volume & limits
 
-Websocket ticker
-```js
-{ type: 'received',
-  order_id: 'e99e1a38-be4f-433d-8341-a5ec70d431a5',
-  order_type: 'limit',
-  size: '0.09199000',
-  price: '2583.88000000',
-  side: 'sell',
-  product_id: 'BTC-USD',
-  sequence: 3510553182,
-  time: '2017-07-06T16:00:12.075000Z' }
-
-{ type: 'received',
-  order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
-  order_type: 'market',
-  size: '0.16730000',
-  side: 'buy',
-  funds: '432.2831240000000000',
-  product_id: 'BTC-USD',
-  sequence: 3510553461,
-  time: '2017-07-06T16:00:15.098000Z' }
-
-// remaining: 0.07531 (0.1673 - 0.09199)
-{ type: 'match',
-  trade_id: 17783459,
-  maker_order_id: 'e99e1a38-be4f-433d-8341-a5ec70d431a5',
-  taker_order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
-  side: 'sell',
-  size: '0.09199000',
-  price: '2583.88000000',
-  product_id: 'BTC-USD',
-  sequence: 3510553462,
-  time: '2017-07-06T16:00:15.098000Z' }
-
-{ type: 'done',
-  side: 'sell',
-  order_id: 'e99e1a38-be4f-433d-8341-a5ec70d431a5',
-  reason: 'filled',
-  product_id: 'BTC-USD',
-  price: '2583.88000000',
-  remaining_size: '0.00000000',
-  sequence: 3510553463,
-  time: '2017-07-06T16:00:15.098000Z' }
-
-{ type: 'done',
-  side: 'buy',
-  order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
-  reason: 'filled',
-  product_id: 'BTC-USD',
-  remaining_size: '0.00000000',
-  sequence: 3510553465,
-  time: '2017-07-06T16:00:15.098000Z' }
-
-// Another match
-
-{ type: 'received',
-  order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
-  order_type: 'limit',
-  size: '0.09787000',
-  price: '2583.88000000',
-  side: 'sell',
-  product_id: 'BTC-USD',
-  sequence: 3510553445,
-  time: '2017-07-06T16:00:14.023000Z' }
-
-{ type: 'open',
-  side: 'sell',
-  price: '2583.88000000',
-  order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
-  remaining_size: '0.09787000',
-  product_id: 'BTC-USD',
-  sequence: 3510553446,
-  time: '2017-07-06T16:00:14.023000Z' }
-
-{ type: 'match',
-  trade_id: 17783460,
-  maker_order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
-  taker_order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
-  side: 'sell',
-  size: '0.07531000',
-  price: '2583.88000000',
-  product_id: 'BTC-USD',
-  sequence: 3510553464,
-  time: '2017-07-06T16:00:15.098000Z' }
-
-{ type: 'done',
-  side: 'buy',
-  order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
-  reason: 'filled',
-  product_id: 'BTC-USD',
-  remaining_size: '0.00000000',
-  sequence: 3510553465,
-  time: '2017-07-06T16:00:15.098000Z' }
-
-{ type: 'done',
-  side: 'sell',
-  order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
-  reason: 'canceled',
-  product_id: 'BTC-USD',
-  price: '2583.88000000',
-  remaining_size: '0.02256000',
-  sequence: 3510554226,
-  time: '2017-07-06T16:00:20.120000Z' }
-
-```
-
-
 # Archive
 
 ```js
@@ -275,4 +187,192 @@ var groupByMinute = { $group: {
 
 db.getCollection('btc-usd-ticker').aggregate([project, groupByMinute]);
 //*/
+```
+
+## Getting OHLC
+
+```js
+// without ID
+db.getCollection('btc-usd-days').aggregate({$sort:{_id: -1}}, {$project: {_id: 0, values: 0}}, {$limit: 30});
+
+// with ID
+db.getCollection('btc-usd-days').aggregate({$sort:{_id: -1}}, {$limit: 30}, {$project: {values: 0}});
+
+// group by 7
+const group = {$group: {
+  _id: 1,
+  open: { $first: '$open' },
+  close: { $last: '$close' },
+  high: { $max: '$high' },
+  low: { $min: '$low' },
+  sold: { $sum: '$sold' },
+  bought: { $sum: '$bought' },
+  volume: { $sum: '$volume' },
+  count: { $sum: '$count' },
+  times: { $push: '$time' }
+}};
+
+// {$project: {values: 0}}
+var addGroupId = {$project: {
+  groupId: { $sum: 1 }
+}};
+
+var noValues = {$project: {
+  values: 0
+}}
+
+db.getCollection('btc-usd-days').aggregate({$sort:{_id: -1}}, {$limit: 28}, noValues);
+```
+
+# Consolidating data
+
+## move data from one to another
+mongoexport -d crybackup -c eth-usd-months -o data/eth-usd-months.json && mongoimport -d crybackup -c gdax.eth-usd-months --file data/eth-usd-months.json
+
+## Consolidate joint data
+
+```js
+// doesn't work for minutes!!
+var name = 'gdax.btc-usd-months';
+
+var sortAsc = {$sort: {_id: 1}};
+
+var groupByTime = {$group: {
+    _id: '$time',
+    id: {$first: '$_id'},
+    high: {$max: '$high'},
+    low: {$min: '$low'},
+    open: {$first: '$open'},
+    close: {$last: '$close'},
+    volume: {$sum: '$volume'},
+    sold: {$sum: '$sold'},
+    bought: {$sum: '$bought'},
+    count: {$sum: '$count'},
+    valuesOpen: {$first: '$values.open'},
+    valuesClose: {$last: '$values.close'},
+//     values: {$addToSet: {open: {$first: '$values.open'}, close: {$last: '$values.close'} }}
+//     'values.open': {$first: '$values.open'},
+//     'values.close': {$last: '$values.close'}
+}};
+
+var joinValues = {$addFields: {
+    time: '$_id',
+    _id: '$id',
+    values: {
+        open: '$valuesOpen',
+        close: '$valuesClose'
+    }
+}};
+
+var removeTempVars = {$project: {
+    valuesOpen: 0, valuesClose: 0, id: 0
+}}
+
+var newName = name + '-fixed';
+var writeResults = {$out: newName};
+db.getCollection(name).aggregate(sortAsc, groupByTime, joinValues, removeTempVars, writeResults);
+db.getCollection(name).find({}).sort({_id: 1});
+db.getCollection(newName).find({}).sort({_id: 1});
+```
+
+## Minutes consolidation
+
+```js
+// Only minutes! Requires mongod v3.5.6+ because of $mergeObjects https://github.com/mongodb/mongo/commit/896687b8ae6b7f848da88c7186a44bf3163c2254
+var name = 'gdax.eth-usd-minutes';
+
+var sortAsc = {$sort: {_id: 1}};
+
+var groupByTime = {$group: {
+    _id: '$time',
+    id: {$first: '$_id'},
+    high: {$max: '$high'},
+    low: {$min: '$low'},
+    open: {$first: '$open'},
+    close: {$last: '$close'},
+    volume: {$sum: '$volume'},
+    sold: {$sum: '$sold'},
+    bought: {$sum: '$bought'},
+    count: {$sum: '$count'},
+    values: {$mergeObjects: '$values'}
+}};
+
+var joinValues = {$addFields: {
+    time: '$_id',
+    _id: '$id'
+}};
+
+var removeTempVars = {$project: {
+    id: 0
+}}
+
+var newName = name + '-fixed';
+var writeResults = {$out: newName};
+db.getCollection(name).aggregate([sortAsc, groupByTime, joinValues, removeTempVars, writeResults], {allowDiskUse: true});
+db.getCollection(name).find({}).sort({_id: 1});
+db.getCollection(newName).find({}).sort({_id: 1});
+```
+
+
+## merging data
+
+```js
+mongodump -d crybackup3 -o data/crybot3/
+mongodump -d crybackup2 -o data/crybot2/
+
+// insert data 2 in data 3
+mongorestore -d crybackup3 data/crybackup2
+
+
+mongodump -d crybackup3 -o data/backups/
+mongorestore -h 165.227.113.186:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb data/backups/crybackup3/
+
+// make a final backup
+mongodump -h 165.227.113.186:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb -o data/backups/
+// load the backup locally
+mongorestore -d crybackup data/backups/crydb
+```
+
+# Grouping
+
+```
+// last 7 days groups
+var resolution = 'days';
+var multiplier = 7;
+var limit = 100;
+
+var descOrder = {$sort: {_id: -1}};
+var ascOrder = {$sort: {_id: 1}};
+var limit = {$limit: limit};
+var toArray = {$group: {
+    _id: null,
+    data: {$push: '$$ROOT'}
+}}
+var addOrdinal = {$unwind: {
+    path: '$data',
+    includeArrayIndex: 'sequence'
+}}
+var addGroupId = {$addFields: {
+    groupId: {$subtract: ['$sequence', {$mod: ['$sequence', multiplier]}]}
+}}
+var aggregateData = {$group: {
+    _id: '$groupId',
+    id: {$first: '$data._id'},
+    open: { $first: '$data.open' },
+    close: { $last: '$data.close' },
+    high: { $max: '$data.high' },
+    low: { $min: '$data.low' },
+    volume: { $sum: '$data.volume' },
+    sold: {$sum: '$data.sold'},
+    bought: {$sum: '$data.bought'},
+    count: {$sum: '$data.count'},
+//     times: {$push: '$data.time'},
+    timestamp: {$first: '$data.values.open.time'},
+    n: {$sum: 1},
+//     valuesOpen: {$first: '$data.values.open'},
+//     valuesClose: {$last: '$data.values.close'}
+}}
+
+db.getCollection('gdax.btc-usd-' + resolution).aggregate(descOrder, limit)
+db.getCollection('gdax.btc-usd-' + resolution).aggregate(descOrder, limit, toArray, addOrdinal, addGroupId, aggregateData, ascOrder);
 ```
