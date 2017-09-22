@@ -2,23 +2,52 @@
 
 :moneybag: :robot: Cryptocurrency trading bot for multiple platforms and coins (gdax/coinbase & dollar/bitcoin/ethereum/litecoin)
 
-This is a multi-currency trading bot. It's primary purpose was to automate trading cryptocurrency, however it can be use to trade forex, stocks and index funds once you made the API integration.
+This is a multi-currency trading bot. It's primary purpose was to automate trading cryptocurrency, however it can be use to trade forex, stocks and index funds once the API integration is available.
 
 # Strategies
 
 There are multiple strategies and depending on what your goals are you might choose one of the following.
 
-## Buy and hold
-
-It's very hard to time the market even with automated tools like this. So, one strategy that can work for you is buying and holding. This espcially useful when you know the main trend is upward. Let's say you bet in the US market going up over the years. In that case, you can buy and hold. This will also avoid you trading fees, commisions and capital gains taxes (if applies).
-
 ## Buy low and sell high
 
 This strategy applies for everything. However, it is specially useful when trading currencies. The market is very volatile so you want to ensure you buy to the lowest price and sell high. It's up to you to choose the time range when this is going to happen (1h, 1d, or 1y).
 
+Trading frequency: seconds/days/weeks/months
+
+## Arbitrage
+
+Cryptocurrency exchanges have different prices sometimes, so you can use that for your advantage:
+1. You can buy from the exchange with the lowest price and sell that amount in the exchange with highest price.
+2. You can buy long from the one the exchange with the lowest price and sell short on the exchange with the highest price. This requires margin account on at least one of the accounts and protects you against market fluctuations and avoid sending funds from one account to the other.
+
+Trading frequency: seconds/days/weeks/months
+
+## Buy and hold
+
+It's very hard to time the market even with automated tools like this. So, one strategy that can work for you is buying and holding. This espcially useful when you know the main trend is upward. Let's say you bet in the BTC market going up over the years. In that case, you can buy and hold. This will also avoid you trading fees, commisions and capital gains taxes (if applies).
+
+Trading frequency: months/years/decades
+
 # Technical Analysis
 
-Again there is a lot to choose from. So this bot uses a combination of multiple ones to give you the best results for your strategy.
+There is a lot of indicators to choose from. You can build an strategy by combining one or more indicators and defining a entry and exit strategy.
+
+# Architecture
+
+This program is divided in multiple modules:
+  - Provider: implements the provider interface to be able to talk to providers. Basically, it needs API keys, ticker data, RESP API to create orders and get funds.
+  - Ticker: connects to providers (exchanges/brokers) and listen to market ticks. It receive orders to execute when price goes beyond or under certain limit. It also stores ticks/orders on DB. (Every time down is losing market data)
+  - Analyzer: takes aggregated data from database and runs indicators and strategies to find entry/exit oportunities.
+  - Simulator: it simulates a broker and calculates profit and losses. It uses the real data from DB to replay it on Ticker and Analyzer.
+  - API & Web: web interface to visualize current orders, market ticks, history of profit and loss. API is used to tran
+
+You can run everything in one system. But for maximum performance, it is recommended to do the following split:
+  - Mongo: (RAM: 1 GB / 1 CPU / 20GB HDD)
+  - Ticker & RabbitMQ (RAM: 0.5 GB / 1 CPU)
+  - Analyzer: (RAM: 0.5 GB / 1 CPU)
+  - Web (RAM: 0.5 GB / 1 CPU)
+
+---
 
 # Notes
 
@@ -53,3 +82,10 @@ var z = require('zero-fill')
         cols.push(z(8, n(s.period.macd_histogram).format('+00.0000'), ' ')[color])
         cols.push(z(8, n(s.period.overbought_rsi).format('00'), ' ').cyan)
 ```
+
+
+### Disclaimer
+
+__USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS.__
+
+__THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
