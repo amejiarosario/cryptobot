@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const amqp = require('../../lib/messaging/amqp');
 
-describe.only('AMQP (e2e)', function () {
+describe('AMQP (e2e)', function () {
   this.timeout(200);
 
   describe('simple queue', () => {
@@ -28,7 +28,7 @@ describe.only('AMQP (e2e)', function () {
       let connection;
 
       amqp.server(handler => {
-        expect(handler.msg).to.eql(message);
+        expect(handler.content).to.eql(JSON.stringify(message));
         connection = handler.connection;
         handler.reply('I got it ;)');
       });

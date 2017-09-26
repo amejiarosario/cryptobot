@@ -39,7 +39,7 @@ class GdaxWebsocketMock {
   reset() {
     if(this._ws) {
       if(this.t) clearInterval(this.t);
-      replayMarcketTicks(this._ws);
+      this.replayMarcketTicks(this._ws);
     }
   }
 

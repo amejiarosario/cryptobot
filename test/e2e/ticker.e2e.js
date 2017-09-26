@@ -65,7 +65,7 @@ describe('Ticker (e2e)', function () {
       // tear down services
       wss.close();
       // http.close();
-      ticker.unsubscribe();
+      ticker.stop();
       // observable.unsubscribe();
     });
 
@@ -73,34 +73,39 @@ describe('Ticker (e2e)', function () {
       let trades = 0;
       ticker = new Ticker(providers);
 
-      ticker.subscribe(
+      ticker.start(
         data => {
-          // if(data.event !== 'tick') { console.log('events', data); }
-          // else { console.log('(e2e) tick', data.tick.price); }
+          // if(data.event !== 'tick') {
+            // console.log('events', data);
+          // } else {
+            // console.log('(e2e) tick', data.tick.price);
+          // }
           if(data.event === 'trade') {
             trades++;
             // console.log('>>> trades', trades);
             expect(parseFloat(data.result.size)).to.be.lessThan(1);
-          }
 
-          if(trades === 3) {
-            done();
+            if (trades === 3) {
+              setTimeout(done, 1000); // just to make sure it saves the data
+              // done();
+            }
           }
         },
         error => done(new Error(error))
       );
+
       // setTimeout(function() {
-      //   expect(trades).to.equal(4);
+      //   expect(trades).to.equal(3);
       //   done();
-      // }, TIMEOUT);
+      // }, TIMEOUT/2);
 
       setTimeout(function() {
         // send order
-        amqp.client(JSON.stringify({
+        amqp.client(({
           "gdax.BTC-USD": [
             { "side": "sell", "target": 4325, "trailing": { "amount": 5 }, "trade": { "amount": 1 } },
             { "side": "buy", "target": 1000, trade: { percentage: 0.01 } },
-            { "side": "sell", "target": 5000, "trailing": { "amount": 5 }, trade: { percentage: 0.01 } },
+            { "side": "sell", "target": 5000, "trailing": { "amount": 5 }, trade: { amount: 50 } },
             { "side": "buy", "target": 3700, "trailing": { "amount": 150 }, "trade": { "percentage": 0.01, "amount": 100 } }
           ]
         }), (err, data) => {
