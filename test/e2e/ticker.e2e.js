@@ -99,6 +99,7 @@ describe('Ticker (e2e)', function () {
       //   done();
       // }, TIMEOUT/2);
 
+      // TODO: send order and then close ticker and open it again. So it also test loading from database
       setTimeout(function() {
         // send order
         amqp.client(({
