@@ -4,8 +4,6 @@ let config = {
     b64secret: process.env.GDAX_SANDBOX_SECRET,
     passphrase: process.env.GDAX_SANDBOX_PASSPHRASE,
     wss: process.env.GDAX_WSS || `ws://localhost:7771`,
-    // wss: process.env.GDAX_WSS || 'wss://ws-feed-public.sandbox.gdax.com'
-    // api: process.env.GDAX_API || 'http://localhost:7777',
     api: process.env.GDAX_API || 'https://api-public.sandbox.gdax.com'
   },
 
