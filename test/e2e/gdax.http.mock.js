@@ -52,7 +52,7 @@ class GdaxHttpMock {
       }).on('close', () => {
         debug('Closing HTTP server');
       }).on('clientError', (err, socket) => {
-        // debug(`------- something ------------------------ %o`, socket);
+        debug(`clientError %o`, err);
         // debug('parser error', err.code);
         // socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
         // get request and do something with it...

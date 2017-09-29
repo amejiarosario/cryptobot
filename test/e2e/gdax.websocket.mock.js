@@ -92,9 +92,11 @@ class GdaxWebsocketMock {
   }
 
   close() {
+    debug(`closing wss...`)
     this.wss.close();
     if(this.t) {
       clearInterval(this.t);
+      debug(`cleared wss interval`);
     }
   }
 }
