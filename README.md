@@ -22,6 +22,10 @@ Cryptocurrency exchanges have different prices sometimes, so you can use that fo
 
 Trading frequency: seconds/days/weeks/months
 
+## High Frequncey Trading
+
+TBD
+
 ## Buy and hold
 
 It's very hard to time the market even with automated tools like this. So, one strategy that can work for you is buying and holding. This espcially useful when you know the main trend is upward. Let's say you bet in the BTC market going up over the years. In that case, you can buy and hold. This will also avoid you trading fees, commisions and capital gains taxes (if applies).
