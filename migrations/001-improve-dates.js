@@ -1,10 +1,15 @@
 const { MongoClient } = require('mongodb');
 
 /**
- * Issues to solve:
+ *
+ * This migration is need for the simulator because:
+ * - It needs to have a timestamp field to get ticks so it can filter by time ranges
+ *
+ * Other issues:
  *
  * - Weeks timestamp breaks when it has multiple months. e.g Aug/week35, Sep/week35
  * - Make values and array instead of an object.
+ * - Ticks.time should be ISODate
  *
  *
 
@@ -83,6 +88,30 @@ async function runMigration(version, databases, pairs, timeframes) {
 }
 
 async function runPipeline(uri, name, version) {
+  const db = await MongoClient.connect(uri);
+  const collection = db.collection(name);
+  const out = `${name}-${version}`;
+  await aggregateTicksData(collection, name, version, out);
+  const result = await addTimestampAndWeek(out, db);
+  db.close();
+  return result;
+}
+
+async function addTimestampAndWeek(outCollection, db) {
+  const collection = db.collection(outCollection);
+
+  return new Promise(resolve => {
+    collection.find({}).forEach(d => {
+      const ts = new Date(d.openTick.time);
+      ts.setMilliseconds(0);
+      ts.setSeconds(0);
+
+      collection.update(d, { $set: { timestamp: ts } });
+    }, resolve);
+  });
+}
+
+async function aggregateTicksData(collection, name, version, outCollection) {
   const convertValuesObjectToTicksArray = {
     $addFields: {
       ticks: { $map: { input: { $objectToArray: '$values' }, as: 'tick', in: '$$tick.v' } }
@@ -96,21 +125,20 @@ async function runPipeline(uri, name, version) {
     }
   }
 
-  const removeFields = { $project: {
-    values: 0,
-    time: 0
-  } };
+  const removeFields = {
+    $project: {
+      values: 0,
+      time: 0
+    }
+  };
 
-  const out = {$out: `${name}-${version}`};
+  const out = { $out: outCollection };
 
-  const pipeline = [convertValuesObjectToTicksArray, addTicks, out];
+  const pipeline = [convertValuesObjectToTicksArray, addTicks, removeFields, out];
 
-  const db = await MongoClient.connect(uri);
-  const collection = db.collection(name);
   const cursor = collection.aggregate(pipeline, { allowDiskUse: true });
-  const result = await cursor.toArray();
-  db.close();
-  return result;
+
+  return cursor.toArray();
 }
 
 runMigration(VERSION, DATABASES, PAIRS, TIMEFRAMES).then(results => {
