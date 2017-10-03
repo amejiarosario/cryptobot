@@ -1,16 +1,20 @@
 const WebSocket = require('ws');
 const uuid = require('uuid');
 const debug = require('debug')('crybot:mock:wss');
+const { MongoClient } = require('mongodb');
+const CONFIG = require('../../config');
 
 class GdaxWebsocketMock {
-  constructor({ port = 7771 } = {}) {
+  constructor({ port = 7771, collection = null } = {}) {
+    this.collection = collection;
+    this.isBusy = false;
+
     this.promise = new Promise((resolve) => {
       this.wss = new WebSocket.Server({ port });
-      debug('WSS on port', port);
+      debug(`WSS on port ${port} ${collection}`);
       resolve(port);
 
       this.wss.on('connection', (ws) => {
-        this._ws = ws;
         ws.on('message', this.onMessage(ws));
         ws.on('close', () => {
           if (this.t) { clearInterval(this.t); }
@@ -29,11 +33,46 @@ class GdaxWebsocketMock {
       message = JSON.parse(message);
       debug(`got message: %o`, message);
 
-      if (message.type === 'subscribe') {
+      if (message.type === 'subscribe' && !this.isBusy) {
         // this.generateFakeMarketTicks(ws, message.product_ids);
-        this.replayMarcketTicks(ws);
+        // this.replayMarcketTicks(ws);
+        this.sendTicks(ws);
       }
     };
+  }
+
+  sendTicks(ws) {
+    this._ws = ws;
+    if(this.collection) {
+      this.replayFromCollection(ws).then(() => {
+        debug(`Done sending messages!!!`);
+      });
+    } else {
+      this.reset(); // send replay from file
+    }
+  }
+
+  async replayFromCollection(ws) {
+    this.isBusy = true;
+    debug(`Connecting to ${CONFIG.db.backup}`);
+    const db = await MongoClient.connect(CONFIG.db.backup);
+    const collection = db.collection(this.collection.name);
+    const cursor = collection.find(this.collection.query);
+    const r = await cursor.forEach(doc => {
+      const tick = Object.assign({}, doc);
+      ws.send(JSON.stringify(tick), error => {
+        if(error) throw new Error(error);
+      });
+    }, error => {
+      if(error) {
+        debug(`Error iterating collection ${error}`);
+      } else {
+        // done
+        this.isBusy = false;
+      }
+    });
+
+    return r;
   }
 
   reset() {
@@ -47,6 +86,7 @@ class GdaxWebsocketMock {
     const ticks = require('../responses/gdax.ticks');
     let seq = 0;
 
+    this.isBusy = true;
     this.t = setInterval(() => {
       const data = (Object.assign({
         sequence: seq,
@@ -59,6 +99,7 @@ class GdaxWebsocketMock {
 
       if(seq === ticks.length - 1) {
         clearInterval(this.t);
+        this.isBusy = false;
       }
     }, 5);
   }

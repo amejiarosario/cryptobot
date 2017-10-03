@@ -376,3 +376,45 @@ var aggregateData = {$group: {
 db.getCollection('gdax.btc-usd-' + resolution).aggregate(descOrder, limit)
 db.getCollection('gdax.btc-usd-' + resolution).aggregate(descOrder, limit, toArray, addOrdinal, addGroupId, aggregateData, ascOrder);
 ```
+
+
+
+```js
+var collection = 'gdax.btc-usd-minutes';
+var newCollection = collection + '-test2';
+
+var limit = {$limit: 1};
+
+var convertValuesObjToArray = {$addFields: {
+    ticks: {$map: {input: {$objectToArray: '$values'}, as: 'tick', in: '$$tick.v'}}
+}}
+
+var removeValues = {$project:{values: 0}}
+
+var addTicks ={$addFields: {
+    openTick: { $arrayElemAt: ['$ticks', 0] },
+    closeTick: { $arrayElemAt: ['$ticks', -1] },
+}}
+
+var addTimestamp = {$addFields: { week: {$literal: '$_id'} }}
+
+var out = {$out: newCollection}
+
+// db.getCollection(collection).aggregate([limit, convertValuesObjToArray, removeValues, addTicks, addTimestamp])
+db.getCollection(collection).aggregate([limit, convertValuesObjToArray, removeValues, addTicks, addTimestamp, out])
+
+db.getCollection(newCollection).find({}).forEach(d => {
+    const ts = ISODate(d.openTick.time);
+    ts.setMilliseconds(0);
+    ts.setSeconds(0);
+
+    db.getCollection(newCollection).update(d, {$set: {timestamp: ts}});
+});
+
+var addWeek = {$addFields: {week: {$week: '$timestamp'}, year: {$year: '$timestamp'} }}
+var remove = {$project: {time: 0}}
+db.getCollection(newCollection).aggregate([addWeek, remove, out]);
+
+db.getCollection(newCollection).find({});
+
+```

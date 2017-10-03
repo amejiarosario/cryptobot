@@ -1,7 +1,7 @@
 # 4.x
 
 Break
-  - [ ] Weeks timestamp breaks when it has multiple months. e.g Aug/week35, Sep/week35
+  - [ ] (migration-001) Weeks timestamp breaks when it has multiple months. e.g Aug/week35, Sep/week35
 
 Features
   - [ ] Trailing orders supports base and quote (keep amount) parameters on trade. E.g. I can say how much BTC I want to buy.
