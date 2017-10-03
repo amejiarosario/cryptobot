@@ -1,5 +1,14 @@
 const { MongoClient } = require('mongodb');
 
+const DEBUG = true;
+
+const VERSION = 1;
+const DATABASES = ['mongodb://localhost:27017/crybackup'];
+const PAIRS = ['gdax.ltc-usd', 'gdax.eth-usd', 'gdax.btc-usd'];
+const TIMEFRAMES = ['minutes', 'hours', 'days', 'weeks', 'months'];
+
+// const currentVersion = null;
+
 /**
  *
  * This migration is need for the simulator because:
@@ -60,16 +69,7 @@ const { MongoClient } = require('mongodb');
  }
  */
 
-const VERSION = 1;
-const DATABASES = ['mongodb://localhost:27017/crybackup'];
 
-//
-// minutes
-//
-
-const PAIRS = ['gdax.ltc-usd'];
-const TIMEFRAMES = ['minutes'];
-// const currentVersion = null;
 
 async function runMigration(version, databases, pairs, timeframes) {
   const collections = pairs.map(p => timeframes.map(t => `${p}-${t}`)).reduce((a, e) => a.concat(e), []);
@@ -90,11 +90,32 @@ async function runMigration(version, databases, pairs, timeframes) {
 async function runPipeline(uri, name, version) {
   const db = await MongoClient.connect(uri);
   const collection = db.collection(name);
-  const out = `${name}-${version}`;
-  await aggregateTicksData(collection, name, version, out);
-  const result = await addTimestampAndWeek(out, db);
+  const outCollection = `${name}-${version}`;
+  await aggregateTicksData(collection, name, version, outCollection);
+  // const result =
+  await addTimestampAndWeek(outCollection, db);
+  const result =
+  await aggregateAddWeekYear(db, outCollection, version, outCollection);
   db.close();
   return result;
+}
+
+async function aggregateAddWeekYear(db, name, version, outCollection) {
+  const collection = db.collection(name);
+  const addWeekYear = { $addFields: {
+    // week: { $week: '$timestamp' },
+    // year: { $year: '$timestamp' },
+    timestampWeek: { $concat: [{ $substr: [{ $year: '$timestamp' }, 0, 4] }, '-', { $substr: [{ $week: '$timestamp' }, 0, 2] }]}
+    // month: { $month: '$timestamp' },
+  } }
+
+  const out = { $out: outCollection };
+
+  const pipeline = [addWeekYear, out];
+
+  const cursor = collection.aggregate(pipeline, { allowDiskUse: true });
+
+  return cursor.toArray();
 }
 
 async function addTimestampAndWeek(outCollection, db) {
@@ -103,8 +124,20 @@ async function addTimestampAndWeek(outCollection, db) {
   return new Promise(resolve => {
     collection.find({}).forEach(d => {
       const ts = new Date(d.openTick.time);
-      ts.setMilliseconds(0);
-      ts.setSeconds(0);
+      ts.setUTCMilliseconds(0);
+      ts.setUTCSeconds(0);
+
+      if (is('hours', outCollection) || is('days', outCollection) || is('months', outCollection)) {
+        ts.setUTCMinutes(0);
+      }
+
+      if (is('days', outCollection) || is('months', outCollection)) {
+        ts.setUTCHours(0);
+      }
+
+      if (is('months', outCollection)) {
+        ts.setUTCDate(1);
+      }
 
       collection.update(d, { $set: { timestamp: ts } });
     }, resolve);
@@ -132,13 +165,24 @@ async function aggregateTicksData(collection, name, version, outCollection) {
     }
   };
 
+  // remove ticks for timeframe that are not minutes
+  if(!is('minutes', name)) {
+    removeFields.$project.ticks = 0;
+  }
+
   const out = { $out: outCollection };
 
   const pipeline = [convertValuesObjectToTicksArray, addTicks, removeFields, out];
+  if (DEBUG) { pipeline.unshift({$limit: 5}); }
+  if (DEBUG) { pipeline.unshift({ $sort: { _id: -1 } }); }
 
   const cursor = collection.aggregate(pipeline, { allowDiskUse: true });
 
   return cursor.toArray();
+}
+
+function is(time, name) {
+  return (new RegExp(time, 'i')).test(name);
 }
 
 runMigration(VERSION, DATABASES, PAIRS, TIMEFRAMES).then(results => {
