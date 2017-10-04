@@ -418,3 +418,12 @@ db.getCollection(newCollection).aggregate([addWeek, remove, out]);
 db.getCollection(newCollection).find({});
 
 ```
+
+
+Get tickets
+```js
+var timeFilter = {$match: {timestamp: {$gte: ISODate("2017-09-28T21:58:00.000Z"), $lt: ISODate("2017-09-28T22:00:00.000Z") }}}
+var onlyTicks = {$project: {ticks: 1, _id: 0}};
+var array = {$unwind: '$ticks'};
+db.getCollection('gdax.ltc-usd-minutes-1').aggregate([timeFilter, onlyTicks, array])
+```

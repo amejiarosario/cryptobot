@@ -5,13 +5,13 @@ const { MongoClient } = require('mongodb');
 const CONFIG = require('../../config');
 
 class GdaxWebsocketMock {
-  constructor({ port = 7771, collection = null } = {}) {
+  constructor({ port = 7771, collection = {} } = {}) {
     this.collection = collection;
     this.isBusy = false;
 
     this.promise = new Promise((resolve) => {
       this.wss = new WebSocket.Server({ port });
-      debug(`WSS on port ${port} ${collection}`);
+      debug(`WSS on port ${port} ${JSON.stringify(collection.name)}`);
       resolve(port);
 
       this.wss.on('connection', (ws) => {
@@ -55,24 +55,47 @@ class GdaxWebsocketMock {
   async replayFromCollection(ws) {
     this.isBusy = true;
     debug(`Connecting to ${CONFIG.db.backup}`);
+
     const db = await MongoClient.connect(CONFIG.db.backup);
     const collection = db.collection(this.collection.name);
-    const cursor = collection.find(this.collection.query);
-    const r = await cursor.forEach(doc => {
-      const tick = Object.assign({}, doc);
-      ws.send(JSON.stringify(tick), error => {
-        if(error) throw new Error(error);
-      });
-    }, error => {
-      if(error) {
-        debug(`Error iterating collection ${error}`);
-      } else {
-        // done
-        this.isBusy = false;
-      }
-    });
+    const cursor = collection.aggregate(this.collection.pipeline, { allowDiskUse: true });
 
-    return r;
+    return new Promise(resolve => {
+      cursor.forEach(doc => {
+        const tick = Object.assign({}, doc.ticks);
+
+        const data = JSON.stringify({
+          // "type": types[Math.floor(types.length * Math.random())],
+          "type": "match",
+          "trade_id": tick._id,
+          "maker_order_id": 1,
+          "taker_order_id": 2,
+          "side": tick.side,
+          "size": tick.size,
+          "price": tick.price,
+          "product_id": 'BTC-USD',
+          "sequence": tick._id,
+          "time": tick.time
+        });
+
+        debug('data*', (data));
+
+
+        ws.send(data, error => {
+          if (error) throw new Error(error);
+        });
+      }, error => {
+        if (error) {
+          debug(`Error iterating collection ${error}`);
+          throw new Error(error);
+        } else {
+          // done
+          this.isBusy = false;
+          db.close();
+          resolve();
+        }
+      });
+    });
   }
 
   reset() {

@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const DEBUG = true;
+const DEBUG = false;
 
 const VERSION = 1;
 const DATABASES = ['mongodb://localhost:27017/crybackup'];
@@ -10,6 +10,8 @@ const TIMEFRAMES = ['minutes', 'hours', 'days', 'weeks', 'months'];
 // const currentVersion = null;
 
 /**
+ *
+ *  $ nodemon migrations/001-improve-dates.js
  *
  * This migration is need for the simulator because:
  * - It needs to have a timestamp field to get ticks so it can filter by time ranges

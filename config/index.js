@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const env = process.env.ENV || process.env.NODE_ENV;
 
 let config = {
@@ -42,9 +44,9 @@ let config = {
 if(env) {
   try {
     const envConfig = require(`./${env}`);
-    Object.assign(config, envConfig);
+    _.merge(config, envConfig);
   } catch (error) {
-    console.log(`No env config found for <${env}>, using default.`);
+    console.log(`No env config found for <${env}>, using default. ${error}`);
   }
 }
 
