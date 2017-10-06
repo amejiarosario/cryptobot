@@ -78,8 +78,7 @@ class GdaxWebsocketMock {
           "time": tick.time
         });
 
-        debug('data*', (data));
-
+        // debug('data*', (data));
 
         ws.send(data, error => {
           if (error) throw new Error(error);

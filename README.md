@@ -43,13 +43,20 @@ This program is divided in multiple modules:
   - Ticker: connects to providers (exchanges/brokers) and listen to market ticks. It receive orders to execute when price goes beyond or under certain limit. It also stores ticks/orders on DB. (Every time down is losing market data)
   - Analyzer: takes aggregated data from database and runs indicators and strategies to find entry/exit oportunities.
   - Simulator: it simulates a broker and calculates profit and losses. It uses the real data from DB to replay it on Ticker and Analyzer.
-  - API & Web: web interface to visualize current orders, market ticks, history of profit and loss. API is used to tran
+  - Web: api & web interface to visualize current orders, market ticks, history of profit and loss. API is used to tran
 
 You can run everything in one system. But for maximum performance, it is recommended to do the following split:
   - Mongo: (RAM: 1 GB / 1 CPU / 20GB HDD)
   - Ticker & RabbitMQ (RAM: 0.5 GB / 1 CPU)
   - Analyzer: (RAM: 0.5 GB / 1 CPU)
   - Web (RAM: 0.5 GB / 1 CPU)
+
+
+## Web
+
+We uses [Techan.js](http://techanjs.org/) (based on D3) to visualize data. The plot has the following features:
+  - Arrows: to indicate trades (buy vs sell & short & long) - http://bl.ocks.org/andredumas/3c0eefdd77a6380b1a35
+  - Zoom & Pan: see http://bl.ocks.org/andredumas/edf630690c10b89be390
 
 ---
 
