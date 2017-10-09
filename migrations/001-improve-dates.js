@@ -37,14 +37,14 @@ const TIMEFRAMES = ['minutes', 'hours', 'days', 'weeks', 'months'];
     "bought" : 590.30711696,
     "sold" : 37.04578815,
     "close" : 52.33,
-    "openTick": {
+    "openingTick": {
       "_id" : 514496186,
       "price" : 52.34,
       "side" : "sell",
       "size" : 0.00019048,
       "time" : "2017-09-16T19:56:02.042000Z"
     }
-    "closeTick": {
+    "closingTick": {
         "_id" : 514496851,
         "price" : 52.33,
         "side" : "buy",
@@ -125,7 +125,7 @@ async function addTimestampAndWeek(outCollection, db) {
 
   return new Promise(resolve => {
     collection.find({}).forEach(d => {
-      const ts = new Date(d.openTick.time);
+      const ts = new Date(d.openingTick.time);
       ts.setUTCMilliseconds(0);
       ts.setUTCSeconds(0);
 
@@ -155,8 +155,8 @@ async function aggregateTicksData(collection, name, version, outCollection) {
 
   const addTicks = {
     $addFields: {
-      openTick: { $arrayElemAt: ['$ticks', 0] },
-      closeTick: { $arrayElemAt: ['$ticks', -1] },
+      openingTick: { $arrayElemAt: ['$ticks', 0] },
+      closingTick: { $arrayElemAt: ['$ticks', -1] },
     }
   }
 

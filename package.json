@@ -38,7 +38,7 @@
     "we2e": "DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --recursive --watch test/e2e/{**/,}*{spec,e2e}.js",
     "ce2e": "DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test nyc --reporter=html --reporter=text mocha --recursive test/e2e/{**/,}*{spec,e2e}.js",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
-    "allTests": "ENV=test nyc --reporter=html --reporter=text --reporter=text-summary --per-file --lines 80 mocha lib/**/*spec.js test/e2e/{**/,}*{spec,e2e}.js",
+    "allTests": "ENV=test nyc --reporter=html --reporter=text --reporter=text-summary --per-file --lines 80 mocha --bail lib/**/*spec.js test/e2e/{**/,}*{spec,e2e}.js",
     "heroku": "DEBUG='crybot:*' DEBUG_DEPTH=6 DEBUG_HIDE_TTY_DATE=true heroku local",
     "deploy": "git push heroku master && git push web master",
     "simulator": "ENV=simulation DEBUG='crybot:*' mocha lib/simulator/*simulator.js"
