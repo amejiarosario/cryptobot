@@ -43,10 +43,10 @@ class GdaxWebsocketMock {
 
   sendTicks(ws) {
     this._ws = ws;
-    if(this.collection) {
+    if(this.collection.name) {
       this.replayFromCollection(ws).then(() => {
         debug(`Done sending messages!!!`);
-      });
+      }).catch(error => { throw new Error(error); });
     } else {
       this.reset(); // send replay from file
     }
