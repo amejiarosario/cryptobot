@@ -1,3 +1,4 @@
+// DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --recursive --watch test/e2e/ticker.e2e.js
 const sinon = require('sinon');
 const { expect, assert } = require('chai');
 const WebSocket = require('ws');
@@ -69,7 +70,7 @@ describe('Ticker (e2e)', function () {
       // observable.unsubscribe();
     });
 
-    it('should get ticks', done => {
+    it('should get 3 trades', done => {
       let trades = 0;
       ticker = new Ticker(providers);
 
