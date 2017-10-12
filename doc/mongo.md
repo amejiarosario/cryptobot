@@ -12,6 +12,8 @@
 # Backup Database
 
 ```sh
+scp root@165.227.113.186:/var/log/mongodb/mongod.log mongod.log
+
 # backup
 mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data
 mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data
