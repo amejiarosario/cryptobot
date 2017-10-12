@@ -29,6 +29,9 @@ heroku logs -t
 # free hours left
 heroku ps -a crybot
 
+# start ticker
+heroku ps:scale ticker=1 -a crybot
+
 # unlimited free login
 heroku addons:create logdna:quaco
 
