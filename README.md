@@ -1,3 +1,12 @@
+# SECURITY RISK
+
+Fix this before this goes public!!!
+
+```sh
+# db user and pass
+cd doc/mongo.md
+```
+
 # Cryptobot
 
 :moneybag: :robot: Cryptocurrency trading bot for multiple platforms and coins (gdax/coinbase & dollar/bitcoin/ethereum/litecoin)
@@ -25,6 +34,8 @@ Trading frequency: seconds/days/weeks/months
 ## High Frequncey Trading
 
 TBD
+
+Trading frequency: seconds
 
 ## Buy and hold
 

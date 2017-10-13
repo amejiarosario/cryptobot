@@ -9,6 +9,17 @@
 *  mongodb://cryuser:CrySkittles123@104.131.94.76:27017/crydb
 *  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186/crydb
 
+# Login
+
+```sh
+export IP='165.227.113.186'
+
+# SECURITY RISK!! If you can do this:
+mongo $IP:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 --authenticationDatabase crydb
+
+mongo $IP:27017 -u adrian -p pass5356275 --authenticationDatabase admin
+```
+
 # Backup Database
 
 ```sh
@@ -24,7 +35,6 @@ mongodump --db crybot2 -o data/crybot2/
 # import backup
 mongorestore -h localhost:27017 -d crybackup2 data/heroku_2frz56zq/
 mongorestore -h localhost:27017 -d crybackup3 data/mongodb-512mb-nyc3-01/crydb/
-
 ```
 
 # backup JSON
