@@ -1,17 +1,36 @@
-# 4.x
+# next
 
-Break
-  - [ ] (migration-001) Weeks timestamp breaks when it has multiple months. e.g Aug/week35, Sep/week35
+  Break
 
-Features
+
+  Features
+  - [ ] Simulator results on graph and report
   - [ ] Trailing orders supports base and quote (keep amount) parameters on trade. E.g. I can say how much BTC I want to buy.
   - [ ] Use Orderbook to always be the MAKER on trades
   - [ ] Authenticate on the websocket feed to get my matched orders
   - [ ] Save funds on db. Before trades are made funds are updated save those and get them on reload
 
-Bugs:
-  - [ ] Orders execute multiple times (maybe not updating done column?)
+  Bugs:
+  - [ ] FIX: UnsubscriptionError: 1 errors occurred during unsubscription: 1) Error: Could not disconnect (not connected)
+  - [ ] Trading Orders don't update correctly. E.g. status from open to cancel doesn't work and sometimes internal values (trigger.buy) are not updated until you restart
+  - [ ] ticker.1: Error R14 (Memory quota exceeded)
+      `web: node --optimize_for_size --max_old_space_size=460 server.js`
+      https://devcenter.heroku.com/articles/node-memory-use
+      https://blog.heroku.com/node-habits-2016#7-avoid-garbage
+  - [ ] Handle graceful port shutdown when WSS is not connected yet: UnsubscriptionError: 1 errors occurred during unsubscription: 1) Error: Could not disconnect (not connected)
 
+  Security:
+  - [ ] logs db password: app/ticker.1:  crybot:db Databse:  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186:53562/crydb
+  - [ ] docs has db passwords
+
+# 4.0.0
+  Break:
+  - [x] (migration-001) Weeks timestamp breaks when it has multiple months. e.g Aug/week35, Sep/week35
+
+  Features:
+
+  Bugs:
+  - [x] Orders execute multiple times (maybe not updating done column?)
 # 3.x
 
 Features:

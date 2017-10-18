@@ -59,6 +59,32 @@ mongoimport -d crybackup2 -c gdax.btc-usd-days --file data/btc-usd-days.json
 mongoimport -d crybackup2 -c gdax.btc-usd-hours --file data/btc-usd-hours.json
 mongoimport -d crybackup2 -c gdax.btc-usd-minutes --file data/btc-usd-minutes.json
 
+mongoimport -d crybackup -c gdax.eth-usd-ticker --file data/ticker/eth-usd-ticker.json
+mongoimport -d crybackup -c gdax.btc-usd-ticker --file data/ticker/btc-usd-ticker.json
+
+
+mongoexport -d crybackup -c test -o data/ticker/btc-usd-ticker-v1.json
+mongoimport -d crybackup -c gdax.btc-usd-ticker --file data/ticker/btc-usd-ticker-v1.json
+
+mongoexport -d crybackup -c test -o data/ticker/eth-usd-ticker-v1.json
+mongoimport -d crybackup -c gdax.eth-usd-ticker --file data/ticker/eth-usd-ticker-v1.json
+
+mongoexport -d crybackup -c gdax.btc-usd-ticker -o data/ticker/btc-usd-ticker-all.json
+mongoexport -d crybackup -c gdax.eth-usd-ticker -o data/ticker/eth-usd-ticker-all.json
+
+mongoimport -d crybackup -c gdax.btc-usd-ticker --file data/backups/ticks-btc-usd-minutes-mongo-new.json
+
+
+cat data/backups/ticks-eth-usd-minutes-mongo-new.js | sed -e 's/_id/"sequence"/g;s/price/"price"/g;s/size/"size"/g;s/time/"time"/g;s/},/}/g;s/\.0,/,/g' > data/backups/ticks-eth-usd-minutes-mongo-new.json
+
+mongoimport -d crybackup -c gdax.eth-usd-ticker --file data/backups/ticks-eth-usd-minutes-mongo-new.json
+mongoexport -d crybackup -c gdax.eth-usd-ticker -o data/ticker/eth-usd-ticker-all.json
+
+cat data/backups/ticks-ltc-usd-minutes-mongo.js | sed -e 's/_id/"sequence"/g;s/price/"price"/g;s/size/"size"/g;s/time/"time"/g;s/},/}/g;s/\.0,/,/g' > data/backups/ticks-ltc-usd-minutes-mongo-new.json
+
+mongoimport -d crybackup -c gdax.ltc-usd-ticker --file data/backups/ticks-ltc-usd-minutes-mongo-new.json
+mongoexport -d crybackup -c gdax.ltc-usd-ticker -o data/ticker/ltc-usd-ticker-all.json
+
 ```
 # Notes
 
@@ -438,4 +464,73 @@ var timeFilter = {$match: {timestamp: {$gte: ISODate("2017-09-28T21:58:00.000Z")
 var onlyTicks = {$project: {ticks: 1, _id: 0}};
 var array = {$unwind: '$ticks'};
 db.getCollection('gdax.ltc-usd-minutes-1').aggregate([timeFilter, onlyTicks, array])
+```
+
+
+Extract ticks
+```js
+var limit = {$limit: 1}
+var unwind = {$unwind: '$ticks'}
+var project = {$project: {ticks: 1}}
+var ticksRoot = {$replaceRoot: {newRoot: '$ticks'}}
+var addSequence = {$addFields: {sequence: '$_id'}}
+var removeId = {$project: {_id: 0}}
+var out = {$out: 'test'}
+db.getCollection('gdax.btc-usd-0-minutes-v1').aggregate([project, unwind, ticksRoot, addSequence, removeId, out], {allowDiskUse: true})
+```
+
+
+```js
+var sort = {$sort: {_id: 1}}
+
+var limit = {$limit: 2};
+
+var project = { $project : {
+  price: 1,
+  size: 1,
+  side: 1,
+  time: 1,
+  sold: { $cond: [{$eq: ['$side', 'sell']}, '$size', 0] },
+  bought: { $cond: [{$eq: ['$side', 'buy']}, '$size', 0] },
+  year: { $year: "$time" },
+  month: { $month: "$time" },
+  week: { $week: "$time" },
+  day: { $dayOfMonth: "$time" },
+  hour: { $hour: "$time" },
+  minute: { $minute: "$time" },
+  yearWeek: { $concat: [
+      {$substr: [{ $year: "$time" }, 0, 4]},
+      '-',
+      {$substr: [{ $week: "$time" }, 0, 2]}
+  ]},
+//   timestamp: {$add: [new Date({ $year: "$time" }, { $month: "$time" }, { $dayOfMonth: "$time" }) ]}
+   timestamp: {$add: [new Date(2017, 7, 11, 16, 15, 14, 123)]}
+}};
+
+var ohlc = {
+    open: { $first: '$price' },
+    close: { $last: '$price' },
+    high: { $max: '$price' },
+    low: { $min: '$price' },
+    sold: { $sum: '$sold' },
+    bought: { $sum: '$bought' },
+    volume: { $sum: '$size' },
+    count: { $sum: 1 },
+    timestamp: {},
+    timestampWeek: { $first: '$yearWeek'}
+}
+
+var groupByMinutes = {$group: {
+    _id : {
+        year: '$year',
+        week: '$week',
+        month: '$month',
+        day: '$day',
+        hour: '$hour',
+        minute: '$minute'
+    },
+
+}}
+
+db.getCollection('gdax.btc-usd-ticker').aggregate([sort, limit, project], {allowDiskUse: true})
 ```

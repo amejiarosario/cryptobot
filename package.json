@@ -41,7 +41,8 @@
     "allTests": "ENV=test nyc --reporter=html --reporter=text --reporter=text-summary --per-file --lines 80 mocha --bail lib/**/*spec.js test/e2e/{**/,}*{spec,e2e}.js",
     "heroku": "DEBUG='crybot:*' DEBUG_DEPTH=6 DEBUG_HIDE_TTY_DATE=true heroku local",
     "deploy": "git push heroku master && git push web master --no-verify",
-    "simulator": "ENV=simulation DEBUG='crybot:*' mocha lib/simulator/*simulator.js"
+    "simulator": "ENV=simulation DEBUG='crybot:*' mocha lib/simulator/*simulator.js",
+    "simulator-web": "ENV=simulation DEBUG='crybot:*' node lib/web"
   },
   "keywords": [],
   "author": "Adrian Mejia <me@adrianmejia.com> (http://adrianmejia.com)",

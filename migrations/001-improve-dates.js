@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { MongoClient } = require('mongodb');
 
 const DEBUG = false;
@@ -68,13 +70,32 @@ const TIMEFRAMES = ['minutes', 'hours', 'days', 'weeks', 'months'];
       }
     ]
 
+
+  // Bulk drop
+
+  var v = VERSION;
+  var collections = PAIRS.map(p => TIMEFRAMES.map((t, i) => `${p}-${i}-${t}-v${v}`)).reduce((a, e) => a.concat(e), []);
+  print(collections)
+  collections.forEach(name => db.getCollection(name).drop());
+
+  //# Rename databases
+  var v = VERSION;
+  var collections = PAIRS.map(p => TIMEFRAMES.map((t, i) => {
+      return {
+          next: `${p}-${i}-${t}`,
+          prev: `${p}-${t}`
+      };
+  })).reduce((a, e) => a.concat(e), []);
+
+  print(collections);
+  collections.forEach(name => db.getCollection(name.prev).renameCollection(name.next) );
+  // collections.forEach(name => print(name.prev, name.next) );
+  // collections.forEach(name => db.getCollection(name.prev).find({}).limit(1) );
  }
  */
 
-
-
 async function runMigration(version, databases, pairs, timeframes) {
-  const collections = pairs.map(p => timeframes.map(t => `${p}-${t}`)).reduce((a, e) => a.concat(e), []);
+  const collections = pairs.map(p => timeframes.map((t, i) => `${p}-${i}-${t}`)).reduce((a, e) => a.concat(e), []);
   const pipelines = [];
 
   console.log('Collections', JSON.stringify(collections));
@@ -92,7 +113,7 @@ async function runMigration(version, databases, pairs, timeframes) {
 async function runPipeline(uri, name, version) {
   const db = await MongoClient.connect(uri);
   const collection = db.collection(name);
-  const outCollection = `${name}-${version}`;
+  const outCollection = `${name}-v${version}`;
   await aggregateTicksData(collection, name, version, outCollection);
   // const result =
   await addTimestampAndWeek(outCollection, db);
