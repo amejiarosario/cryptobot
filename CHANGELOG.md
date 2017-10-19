@@ -1,3 +1,9 @@
+# Commits
+  🔨	`:hammer:` - Breaking change
+  💡	`:bulb:` - New Feature
+  🐛	`:bug:`  - Fixed Bug
+  🔒	`:lock:` - Security Improvements
+
 # next
 
   Break
@@ -10,8 +16,7 @@
   - [ ] Authenticate on the websocket feed to get my matched orders
   - [ ] Save funds on db. Before trades are made funds are updated save those and get them on reload
 
-  Bugs:
-  - [ ] FIX: UnsubscriptionError: 1 errors occurred during unsubscription: 1) Error: Could not disconnect (not connected)
+  Bugs
   - [ ] Trading Orders don't update correctly. E.g. status from open to cancel doesn't work and sometimes internal values (trigger.buy) are not updated until you restart
   - [ ] ticker.1: Error R14 (Memory quota exceeded)
       `web: node --optimize_for_size --max_old_space_size=460 server.js`
@@ -22,6 +27,11 @@
   Security:
   - [ ] logs db password: app/ticker.1:  crybot:db Databse:  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186:53562/crydb
   - [ ] docs has db passwords
+
+# 4.0.1
+
+  Bugs
+  - [x] FIX: UnsubscriptionError: 1 errors occurred during unsubscription: 1) Error: Could not disconnect (not connected)
 
 # 4.0.0
   Break:
