@@ -9,6 +9,12 @@
 *  mongodb://cryuser:CrySkittles123@104.131.94.76:27017/crydb
 *  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186/crydb
 
+# Logs
+
+```sh
+/Users/admejiar/workspace/mongodb/mongo.log
+/var/log/mongodb/mongod.log mongod.log
+```
 # Login
 
 ```sh

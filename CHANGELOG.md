@@ -1,8 +1,7 @@
 # Commits
   🔨	`:hammer:` - Breaking change
   💡	`:bulb:` - New Feature
-  🐛	`:bug:`  - Fixed Bug
-  🔒	`:lock:` - Security Improvements
+  🐛	`:bug:`  - Fixed Bug / Security improvements
 
 # next
 
