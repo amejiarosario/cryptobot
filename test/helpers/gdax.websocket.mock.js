@@ -3,6 +3,7 @@ const uuid = require('uuid');
 const debug = require('debug')('crybot:mock:wss');
 const { MongoClient } = require('mongodb');
 const CONFIG = require('../../config');
+const moment = require('moment');
 
 class GdaxWebsocketMock {
   constructor({ port = 7771, collection = {} } = {}) {
@@ -44,7 +45,7 @@ class GdaxWebsocketMock {
   sendTicks(ws) {
     this._ws = ws;
     if(this.collection.name) {
-      this.replayFromCollection(ws).then(() => {
+      this.replayFromCollection(ws, this.collection.dateFormat).then(() => {
         debug(`Done sending messages!!!`);
       }).catch(error => { throw new Error(error); });
     } else {
@@ -52,37 +53,80 @@ class GdaxWebsocketMock {
     }
   }
 
-  async replayFromCollection(ws) {
+  /**
+   * Sending each individual tick is not feasible since it's too much data and for large range CPU goes crazy
+   * Sending a OHLC snapshot by time can solve this problem (e.g. by hour).
+   *
+   * Full format 'YYYY-MM-DD HH:mm:ss.SSS'
+   * Hour format 'YYYY-MM-DD HH:00:00.000'
+   *
+   * @param {*} ws
+   */
+  async replayFromCollection(ws, dateFormat = 'YYYY-MM-DD HH:00:00.000') {
     this.isBusy = true;
-    debug(`Connecting to ${CONFIG.db.backup}`);
+    debug(`Connecting to ${CONFIG.db.backup} -- ${this.collection.name} -- ${dateFormat}...`);
 
     const db = await MongoClient.connect(CONFIG.db.backup);
     const collection = db.collection(this.collection.name);
     const cursor = collection.aggregate(this.collection.pipeline, { allowDiskUse: true });
 
     return new Promise(resolve => {
+      const map = {};
+      let lastTime = null;
+
       cursor.forEach(doc => {
-        const tick = Object.assign({}, doc.ticks);
+        const data = doc.ticks;
+        const time = moment.utc(data.time).format(dateFormat);
 
-        const data = JSON.stringify({
-          // "type": types[Math.floor(types.length * Math.random())],
-          "type": "match",
-          "trade_id": tick._id,
-          "maker_order_id": 1,
-          "taker_order_id": 2,
-          "side": tick.side,
-          "size": tick.size,
-          "price": tick.price,
-          "product_id": 'BTC-USD',
-          "sequence": tick._id,
-          "time": tick.time
-        });
+        // debug('time', time, data.time, data.price);
+        if(map[time]) {
+          // existing
+          const current = map[time];
 
-        // debug('data*', (data));
+          if (data.price > current.high.price) {
+            current.high = data;
+          }
 
-        ws.send(data, error => {
-          if (error) throw new Error(error);
-        });
+          if (data.price < current.low.price) {
+            current.low = data;
+          }
+
+          current.close = data;
+        } else {
+          // new
+          map[time] = {};
+          map[time].high = data;
+          map[time].low = data;
+          map[time].ticks = [];
+          map[time].ticks.push(data); // open tick
+
+          // close and send previous
+          const last = map[lastTime];
+          if(last) {
+            if (last.high.time > last.low.time) {
+              last.ticks.push(last.low);
+              last.ticks.push(last.high);
+            } else {
+              last.ticks.push(last.high);
+              last.ticks.push(last.low);
+            }
+            last.ticks.push(last.close);
+
+            last.ticks.map(tick => {
+              // debug('ticks***', lastTime, getTickString(tick))
+              ws.send(getTickString(tick), error => {
+                if (error) throw new Error(error);
+              });
+            });
+
+            // debug('last', lastTime, last.ticks);
+          }
+
+          // debug(`---- ${time} last: `);
+        }
+
+        lastTime = time;
+
       }, error => {
         if (error) {
           debug(`Error iterating collection ${error}`);
@@ -162,6 +206,21 @@ class GdaxWebsocketMock {
       debug(`cleared wss interval`);
     }
   }
+}
+
+function getTickString(tick) {
+  return JSON.stringify({
+    "type": "match",
+    "trade_id": tick._id,
+    "maker_order_id": 1,
+    "taker_order_id": 2,
+    "side": tick.side,
+    "size": tick.size,
+    "price": parseFloat(tick.price),
+    "product_id": 'BTC-USD',
+    "sequence": tick._id,
+    "time": tick.time
+  });
 }
 
 module.exports = GdaxWebsocketMock;

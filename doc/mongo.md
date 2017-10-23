@@ -15,6 +15,15 @@
 /Users/admejiar/workspace/mongodb/mongo.log
 /var/log/mongodb/mongod.log mongod.log
 ```
+
+# Indexes
+```js
+// asc
+db.getCollection('gdax.btc-usd-0-minutes-v1').createIndex({'timestamp':-1})
+// desc
+db.getCollection('gdax.btc-usd-0-minutes-v1').createIndex({'timestamp':1})
+```
+
 # Login
 
 ```sh

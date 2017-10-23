@@ -9,6 +9,7 @@
 
 
   Features
+  - [x] feat(simulator): uses OHLC aggregate instead of raw (and repeated values)
   - [ ] Simulator results on graph and report
   - [ ] Trailing orders supports base and quote (keep amount) parameters on trade. E.g. I can say how much BTC I want to buy.
   - [ ] Use Orderbook to always be the MAKER on trades
