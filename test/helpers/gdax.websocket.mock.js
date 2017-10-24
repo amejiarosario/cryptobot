@@ -58,7 +58,8 @@ class GdaxWebsocketMock {
    * Sending a OHLC snapshot by time can solve this problem (e.g. by hour).
    *
    * Full format 'YYYY-MM-DD HH:mm:ss.SSS'
-   * Hour format 'YYYY-MM-DD HH:00:00.000'
+   * by Hour format 'YYYY-MM-DD HH:00:00.000'
+   * by Day format 'YYYY-MM-DD 00:00:00.000'
    *
    * @param {*} ws
    */
