@@ -100,6 +100,10 @@ cat data/backups/ticks-ltc-usd-minutes-mongo.js | sed -e 's/_id/"sequence"/g;s/p
 mongoimport -d crybackup -c gdax.ltc-usd-ticker --file data/backups/ticks-ltc-usd-minutes-mongo-new.json
 mongoexport -d crybackup -c gdax.ltc-usd-ticker -o data/ticker/ltc-usd-ticker-all.json
 
+
+mongoimport -d cryrecover -c gdax.btc-usd-ticker-all --file data/ticker/btc-usd-ticker-all.json # imported 3,009,298 documents
+mongoimport -d cryrecover -c gdax.eth-usd-ticker-all --file data/ticker/eth-usd-ticker-all.json # imported 1,818,575 document
+mongoimport -d cryrecover -c gdax.ltc-usd-ticker-all --file data/ticker/ltc-usd-ticker-all.json # imported 18,864 documents
 ```
 # Notes
 
