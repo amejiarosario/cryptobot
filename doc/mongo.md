@@ -48,10 +48,14 @@ mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data/mo
 mongodump --db crybot2 -o data/crybot2/
 
 mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.26/
+mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.27/
+mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.28/
 
 # import backup
 mongorestore -h localhost:27017 -d crybackup2 data/heroku_2frz56zq/
 mongorestore -h localhost:27017 -d crybackup3 data/mongodb-512mb-nyc3-01/crydb/
+
+mongorestore -d cryrecover data/dumps/2017.10.27/
 ```
 
 # backup JSON
@@ -61,7 +65,7 @@ mongorestore -h localhost:27017 -d crybackup3 data/mongodb-512mb-nyc3-01/crydb/
 mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/btc-usd-ticker.json
 mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c eth-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/eth-usd-ticker.json
 
-# import data # mongoimport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c <collection> -u <user> -p <password> --file <input file>
+# import data # mongoimport -h ds151232.mlab.com:51232 -u <user> -p <password> -d heroku_2frz56zq -c <collection> --file <input file>
 
 mongoimport -d crybackup2 -c eth-usd-ticker --file data/eth-usd-ticker.json
 mongoimport -d crybackup2 -c gdax.eth-usd-months --file data/eth-usd-months.json
@@ -106,6 +110,45 @@ mongoexport -d crybackup -c gdax.ltc-usd-ticker -o data/ticker/ltc-usd-ticker-al
 mongoimport -d cryrecover -c gdax.btc-usd-ticker-all --file data/ticker/btc-usd-ticker-all.json # imported 3,009,298 documents
 mongoimport -d cryrecover -c gdax.eth-usd-ticker-all --file data/ticker/eth-usd-ticker-all.json # imported 1,818,575 document
 mongoimport -d cryrecover -c gdax.ltc-usd-ticker-all --file data/ticker/ltc-usd-ticker-all.json # imported 18,864 documents
+
+
+mongoexport -d cryrecover -c gdax.btc-usd-0-minutes-v1 -o data/tmp/gdax.btc-usd-0-minutes-v1.json
+cat data/tmp/gdax.btc-usd-0-minutes-v1.json | head -n 1 | sed -e 's/"time":"\([0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z\)"/"time":{"$date":"\1"}/g'
+
+# export and transform the date
+for COIN in btc eth ltc
+do
+    for TIME in 0-minutes 1-hours 2-days 3-weeks 4-months
+    do
+        echo "Processing $COIN in $TIME"
+        mongoexport -d cryrecover -c gdax.$COIN-usd-$TIME-v1 -o data/tmp/gdax.$COIN-usd-$TIME-v2.json
+
+        # format time field as a date ($date)
+        sed -i '' 's/"time":"\([0-9]*-[0-9]*-[0-9]*T[0-9]*:[0-9]*:[0-9]*.[0-9]*Z\)"/"time":{"$date":"\1"}/g' data/tmp/gdax.$COIN-usd-$TIME-v2.json
+    done
+done
+
+# Locally merge away the transformed data
+for COIN in btc eth ltc
+do
+    for TIME in 0-minutes 1-hours 2-days 3-weeks 4-months
+    do
+        echo "Importing $COIN in $TIME"
+        mongoimport -d cryrecover -c gdax.$COIN-usd-$TIME-v2 --file data/tmp/gdax.$COIN-usd-$TIME-v2.json
+    done
+done
+
+# Server
+for COIN in btc eth ltc
+do
+    for TIME in 0-minutes 1-hours 2-days 3-weeks 4-months
+    do
+        echo "Importing to SERVER $COIN in $TIME"
+        mongoimport -h 165.227.113.186:53562 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb -c gdax.$COIN-usd-$TIME-v2 --file data/tmp/gdax.$COIN-usd-$TIME-v2.json
+    done
+done
+
+
 ```
 # Notes
 
