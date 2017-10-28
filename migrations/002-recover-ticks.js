@@ -1,6 +1,8 @@
 #!/usr/bin/env node
+
 // DEBUG='crybot:*' nodemon migrations/002-recover-ticks.js
-// DEBUG='crybot:*' node migrations/002-recover-ticks.js
+// DEBUG='crybot:*' node migrations/002-recover-ticks.js && echo "---- done ----"
+
 const { MongoClient } = require('mongodb');
 
 const mongo = require('../lib/ticker/db');
@@ -48,6 +50,18 @@ const TIMEFRAMES = ['minutes', 'hours', 'days', 'weeks', 'months'];
   print(collections)
   collections.forEach(name => db.getCollection(name).drop());
 
+
+  // migration appy
+  mongodump --db cryrecover -o data/dumps/2017.10.05/
+
+  mongorestore -d crybackup data/dumps/2017.10.05/cryrecover/
+
+  mongorestore -h 165.227.113.186:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb data/dumps/2017.10.05/cryrecover/
+
+
+  mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.26/
+  mongorestore -d cryrecover data/dumps/2017.10.26/crydb/
+
  */
 
 async function runPipeline(uri, productId, version) {
@@ -64,7 +78,7 @@ async function runPipeline(uri, productId, version) {
 
   collection.find({}).forEach(doc => {
     // console.log(productId, doc);
-    ohlc.update(doc);
+    ohlc.update(Object.assign({}, doc, {size: 0}));
   }, error => {
     if(error) {
       // error
@@ -74,7 +88,6 @@ async function runPipeline(uri, productId, version) {
       // done
       db.close();
       ohlc.flush();
-      console.log('Done with ', productId);
     }
   });
 }
@@ -85,7 +98,6 @@ async function runMigration(version, databases, pairs, timeframes) {
       await runPipeline(uri, pair, version);
     }
   }
-  console.log(`Done with everything! ${PAIRS}`);
 }
 
 runMigration(VERSION, DATABASES, PAIRS, TIMEFRAMES).then(results => {

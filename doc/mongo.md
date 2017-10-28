@@ -47,6 +47,8 @@ mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data
 mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data/mongodb-512mb-nyc3-01/
 mongodump --db crybot2 -o data/crybot2/
 
+mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.26/
+
 # import backup
 mongorestore -h localhost:27017 -d crybackup2 data/heroku_2frz56zq/
 mongorestore -h localhost:27017 -d crybackup3 data/mongodb-512mb-nyc3-01/crydb/
@@ -373,7 +375,7 @@ db.getCollection(newName).find({}).sort({_id: 1});
 
 ## merging data
 
-```js
+```sh
 mongodump -d crybackup3 -o data/crybot3/
 mongodump -d crybackup2 -o data/crybot2/
 
