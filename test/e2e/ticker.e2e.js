@@ -6,8 +6,8 @@ const { Observable } = require('rxjs/Rx');
 
 require('events').EventEmitter.prototype._maxListeners = 100;
 
-const GdaxWebsocketMock = require('./gdax.websocket.mock');
-const GdaxHttpMock = require('./gdax.http.mock');
+const GdaxWebsocketMock = require('../helpers/gdax.websocket.mock');
+const GdaxHttpMock = require('../helpers/gdax.http.mock');
 const { Ticker } = require('../../lib/ticker/ticker');
 const mongo = require('../../lib/ticker/db');
 const amqp = require('../../lib/messaging/amqp');

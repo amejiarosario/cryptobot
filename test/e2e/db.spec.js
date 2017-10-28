@@ -23,14 +23,15 @@ describe('db (real connection to mongo)', function () {
       mongo.saveTickAggregation(PRODUCT_ID, TICKS).then(() => {
         return mongo.connect();
       }).then(db => {
-        const collection = db.collection('gdax.btc-usd-0-minutes-v1');
+        const collection = db.collection('gdax.btc-usd-0-minutes-v2');
         return collection.find({}).toArray();
       }).then(docs => {
         // console.log('docs', (docs));
         expect(docs.length).to.equal(2);
 
         const tick = docs[0].ticks[0];
-        expect(tick.time).to.eql('2017-12-31T16:00:15.098000Z');
+
+        expect(tick.time).to.eql(new Date('2017-12-31T16:00:15.098000Z'));
         done();
       })
       .catch(done);
@@ -40,11 +41,11 @@ describe('db (real connection to mongo)', function () {
       mongo.saveTickAggregation(PRODUCT_ID, TICKS).then(() => {
         return mongo.connect();
       }).then(db => {
-        const collection = db.collection('gdax.btc-usd-4-months-v1');
+        const collection = db.collection('gdax.btc-usd-4-months-v2');
         return collection.find({}).toArray();
       }).then(docs => {
         // expect(docs.length).to.equal(2);
-        // expect(docs[0].ticks).to.equal(undefined);
+        expect(docs[0].ticks).to.equal(undefined);
         done();
       })
         .catch(done);
