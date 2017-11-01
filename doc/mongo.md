@@ -56,6 +56,7 @@ mongorestore -h localhost:27017 -d crybackup2 data/heroku_2frz56zq/
 mongorestore -h localhost:27017 -d crybackup3 data/mongodb-512mb-nyc3-01/crydb/
 
 mongorestore -d cryrecover data/dumps/2017.10.27/
+mongorestore -d crybackup data/dumps/2017.10.28/
 ```
 
 # backup JSON

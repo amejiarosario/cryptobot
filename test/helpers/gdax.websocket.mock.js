@@ -74,6 +74,7 @@ class GdaxWebsocketMock {
     return new Promise(resolve => {
       const map = {};
       let lastTime = null;
+      let totalSent = 0;
 
       cursor.forEach(doc => {
         const data = doc.ticks;
@@ -115,6 +116,7 @@ class GdaxWebsocketMock {
 
             last.ticks.map(tick => {
               // debug('ticks***', lastTime, getTickString(tick))
+              totalSent++;
               ws.send(getTickString(tick), error => {
                 if (error) throw new Error(error);
               });
@@ -131,9 +133,11 @@ class GdaxWebsocketMock {
       }, error => {
         if (error) {
           debug(`Error iterating collection ${error}`);
+          debug(`*** Total messages sent: ${totalSent}`);
           throw new Error(error);
         } else {
           // done
+          debug(`--- Total messages sent: ${totalSent}`);
           this.isBusy = false;
           db.close();
           resolve();

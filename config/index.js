@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const env = process.env.ENV || process.env.NODE_ENV;
+const HOURS = 1000 * 60 * 60;
 
 let config = {
   gdax: {
@@ -32,11 +33,13 @@ let config = {
 
   ticker: {
     providers: process.env.CRYBOT_TICKER_PROVIDERS || '{"gdax": ["BTC-USD", "ETH-USD", "LTC-USD"]}',
+    // bufferTime (ms) - interval collecting data before saving
     modifiers: process.env.CRYBOT_TICKER_MODIFIERS || '{"bufferTime": 10000}'
   },
 
   analyzer: {
-    strategy: process.env.CRYBOT_ANALYZER_STRATEGY || 'weekly-close-diff'
+    strategy: process.env.CRYBOT_ANALYZER_STRATEGY || 'weekly-close-diff',
+    interval: process.env.CRYBOT_ANALYZER_INTERVAL || 6 * HOURS
   }
 };
 
