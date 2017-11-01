@@ -11,7 +11,6 @@
   Features
   - [x] feat(simulator): uses OHLC aggregate instead of raw (and repeated values)
   - [ ] Simulator results on graph and report
-  - [ ] Trailing orders supports base and quote (keep amount) parameters on trade. E.g. I can say how much BTC I want to buy.
   - [ ] Use Orderbook to always be the MAKER on trades
   - [ ] Authenticate on the websocket feed to get my matched orders
   - [ ] Save funds on db. Before trades are made funds are updated save those and get them on reload
@@ -27,6 +26,11 @@
   Security:
   - [ ] logs db password: app/ticker.1:  crybot:db Databse:  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186:53562/crydb
   - [ ] docs has db passwords
+
+# 4.1.0
+
+Feat:
+- [x] Trailing orders supports base and quote (keep amount) parameters on trade. E.g. I can say how much BTC I want to buy.
 
 # 4.0.1
 
