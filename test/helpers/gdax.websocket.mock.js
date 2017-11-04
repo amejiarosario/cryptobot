@@ -4,6 +4,7 @@ const debug = require('debug')('crybot:mock:wss');
 const { MongoClient } = require('mongodb');
 const CONFIG = require('../../config');
 const moment = require('moment');
+const Ohlc = require('../../lib/common/ohlc-aggregator');
 
 class GdaxWebsocketMock {
   constructor({ port = 7771, collection = {} } = {}) {
@@ -45,12 +46,32 @@ class GdaxWebsocketMock {
   sendTicks(ws) {
     this._ws = ws;
     if(this.collection.name) {
-      this.replayFromCollection(ws, this.collection.dateFormat).then(() => {
+      this.replayFromCollection(this.collection.dateFormat).then(messages => {
+        debug(`Done getting messages!`, messages.length);
+        return this.sendMessages(ws, messages);
+      }).then(() => {
         debug(`Done sending messages!!!`);
       }).catch(error => { throw new Error(error); });
     } else {
       this.reset(); // send replay from file
     }
+  }
+
+  async sendMessages(ws, messages){
+    return new Promise(resolve => {
+      let index = 0;
+      const t = setInterval(() => {
+        if(index >= messages.length) {
+          clearInterval(t);
+          resolve();
+        } else {
+          ws.send(getTickString(messages[index++]), error => {
+            if (error) throw new Error(error);
+          });
+        }
+
+      }, 1);
+    });
   }
 
   /**
@@ -63,7 +84,7 @@ class GdaxWebsocketMock {
    *
    * @param {*} ws
    */
-  async replayFromCollection(ws, dateFormat = 'YYYY-MM-DD HH:00:00.000') {
+  async replayFromCollection(dateFormat = 'YYYY-MM-DD HH:00:00.000') {
     this.isBusy = true;
     debug(`Connecting to ${CONFIG.db.backup} -- ${this.collection.name} -- ${dateFormat}...`);
 
@@ -75,61 +96,15 @@ class GdaxWebsocketMock {
       const map = {};
       let lastTime = null;
       let totalSent = 0;
+      let messages = [];
+      let ohlc = new Ohlc({ format: dateFormat, cb: ticks => {
+        messages = messages.concat(ticks);
+        totalSent++;
+      }});
 
       cursor.forEach(doc => {
-        const data = doc.ticks;
-        const time = moment.utc(data.time).format(dateFormat);
-
-        // debug('time', time, data.time, data.price);
-        if(map[time]) {
-          // existing
-          const current = map[time];
-
-          if (data.price > current.high.price) {
-            current.high = data;
-          }
-
-          if (data.price < current.low.price) {
-            current.low = data;
-          }
-
-          current.close = data;
-        } else {
-          // new
-          map[time] = {};
-          map[time].high = data;
-          map[time].low = data;
-          map[time].ticks = [];
-          map[time].ticks.push(data); // open tick
-
-          // close and send previous
-          const last = map[lastTime];
-          if(last) {
-            if (last.high.time > last.low.time) {
-              last.ticks.push(last.low);
-              last.ticks.push(last.high);
-            } else {
-              last.ticks.push(last.high);
-              last.ticks.push(last.low);
-            }
-            last.ticks.push(last.close);
-
-            last.ticks.map(tick => {
-              // debug('ticks***', lastTime, getTickString(tick))
-              totalSent++;
-              ws.send(getTickString(tick), error => {
-                if (error) throw new Error(error);
-              });
-            });
-
-            // debug('last', lastTime, last.ticks);
-          }
-
-          // debug(`---- ${time} last: `);
-        }
-
-        lastTime = time;
-
+        const tick = doc.ticks;
+        ohlc.update(tick);
       }, error => {
         if (error) {
           debug(`Error iterating collection ${error}`);
@@ -140,7 +115,10 @@ class GdaxWebsocketMock {
           debug(`--- Total messages sent: ${totalSent}`);
           this.isBusy = false;
           db.close();
-          resolve();
+          ohlc.flush(ticks => {
+            messages = messages.concat(ticks);
+            resolve(messages);
+          });
         }
       });
     });
