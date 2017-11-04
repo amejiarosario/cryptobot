@@ -68,3 +68,21 @@ exports.order = {
   "status": "pending",
   "settled": false
 };
+
+exports.order2 = {
+  "id": "08fe32c4-63c2-4002-acd7-6362b8bc8143",
+  "price": "6383.01000000",
+  "size": "0.44900000",
+  "product_id": "BTC-USD",
+  "side": "buy",
+  "stp": "dc",
+  "type": "limit",
+  "time_in_force": "GTC",
+  "post_only": false,
+  "created_at": "2017-10-31T15:51:02.202288Z",
+  "fill_fees": "0.0000000000000000",
+  "filled_size": "0.00000000",
+  "executed_value": "0.0000000000000000",
+  "status": "pending",
+  "settled": false
+}

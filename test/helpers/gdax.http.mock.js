@@ -7,7 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
-const { accounts } = require('../responses/gdax');
+const { accounts, orders } = require('../responses/gdax');
 
 // curl - k https://localhost:7777/accounts
 // https://www.akadia.com/services/ssh_test_certificate.html
@@ -16,9 +16,9 @@ const { accounts } = require('../responses/gdax');
 var options = {
   key: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.key'),
   cert: fs.readFileSync('/Users/admejiar/scripts/certs/localhost/server.crt'),
-  requestCert: false,
-  rejectUnauthorized: false,
-  ciphers: 'DES-CBC3-SHA' // https://github.com/nodejs/node/issues/9845#issuecomment-264032107
+  // requestCert: false,
+  // rejectUnauthorized: false,
+  // ciphers: 'DES-CBC3-SHA' // https://github.com/nodejs/node/issues/9845#issuecomment-264032107
 
   // ciphers: 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-SHA384',
   // honorCipherOrder: true,
@@ -35,14 +35,16 @@ class GdaxHttpMock {
       // const app = this.getExpressApp();
       const app = express();
       app.use((req, res, next) => {
+        debug(`req`, req.method, req.url)
         debug(`------- something ------------------------`);
       });
 
-      this.server = https.createServer(options, (req, res) => {
-        debug(`------- something ------------------------`);
-      })
+      // this.server = https.createServer(options, (req, res) => {
+      //   debug(`-----***-- something ------------------------`);
+      // })
       // this.server = https.createServer(options, app)
       // this.server = https.createServer(options, this.requestHandler)
+      this.server = https.createServer(options, this.getExpressApp())
       .listen(port, () => {
         debug(`HTTP listening on ${port}`);
         resolve(port);
@@ -65,11 +67,23 @@ class GdaxHttpMock {
     // app.use(bodyParser.json()); // for parsing application/json
     // app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
     app.use(morgan('dev', {
-      stream: debug
+      stream: process.stdout
     })); // login
 
     app.get('/accounts', (req, res) => {
       res.json(accounts);
+    });
+
+    app.get('/funding', (req, res) => {
+      res.json(accounts);
+    });
+
+    app.get('/orders', (req, res) => {
+      res.json(accounts);
+    });
+
+    app.post('/orders', (req, res) => {
+      res.json(orders);
     });
 
     // app.use(function (req, res, next) {
@@ -83,21 +97,6 @@ class GdaxHttpMock {
     // });
 
     return app;
-  }
-
-  requestHandler(request, response) {
-    // this.server = http.createServer((request, response) => {
-    debug('request', request.method, request.url);
-
-    const hasMatch = [
-      this.getAccount(request, response),
-      this.getEcho(request, response)
-    ].some(i => i);
-
-    if (!hasMatch) {
-      response.statusCode = 404;
-      response.end();
-    }
   }
 
   isConnected() {
@@ -127,6 +126,22 @@ class GdaxHttpMock {
       });
       return true;
     }
+  }
+
+
+  requestHandler(request, response) {
+    // this.server = http.createServer((request, response) => {
+    debug('request', request.method, request.url);
+
+    // const hasMatch = [
+      this.getAccount(request, response),
+      // this.getEcho(request, response)
+    // ].some(i => i);
+
+    // if (!hasMatch) {
+      // response.statusCode = 404;
+      response.end();
+    // }
   }
 
   close() {
