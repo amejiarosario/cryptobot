@@ -48,7 +48,7 @@ class GdaxWebsocketMock {
     if(this.collection.name) {
       this.replayFromCollection(this.collection.dateFormat).then(messages => {
         debug(`Done getting messages!`, messages.length);
-        return this.sendMessages(ws, messages);
+        return this.sendMessages(ws, messages, this.collection.delay);
       }).then(() => {
         debug(`Done sending messages!!!`);
       }).catch(error => { throw new Error(error); });
@@ -57,7 +57,7 @@ class GdaxWebsocketMock {
     }
   }
 
-  async sendMessages(ws, messages){
+  async sendMessages(ws, messages, delay = 0){
     return new Promise(resolve => {
       let index = 0;
       const t = setInterval(() => {
@@ -70,7 +70,7 @@ class GdaxWebsocketMock {
           });
         }
 
-      }, 1);
+      }, delay);
     });
   }
 
