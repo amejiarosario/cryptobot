@@ -51,6 +51,15 @@ mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-
 mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.27/
 mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.28/
 
+mongo mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186:53562/crydb
+TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+
+TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+
+TF='weekly' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+
+TF='monthly' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+
 # import backup
 mongorestore -h localhost:27017 -d crybackup2 data/heroku_2frz56zq/
 mongorestore -h localhost:27017 -d crybackup3 data/mongodb-512mb-nyc3-01/crydb/

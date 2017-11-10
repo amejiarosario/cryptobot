@@ -65,7 +65,9 @@ class GdaxWebsocketMock {
           clearInterval(t);
           resolve();
         } else {
-          ws.send(getTickString(messages[index++]), error => {
+          const tick = messages[index++];
+          debug('>>> tick: ', tick.price, tick.time);
+          ws.send(getTickString(tick), error => {
             if (error) throw new Error(error);
           });
         }
