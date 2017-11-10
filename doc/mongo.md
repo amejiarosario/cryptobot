@@ -443,6 +443,7 @@ mongorestore -h 165.227.113.186:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d 
 mongodump -h 165.227.113.186:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb -o data/backups/
 // load the backup locally
 mongorestore -d crybackup data/backups/crydb
+mongorestore -d crybackup /Users/admejiar/dumps/2017-11-09T16:06:55/crydb/
 ```
 
 # Grouping
