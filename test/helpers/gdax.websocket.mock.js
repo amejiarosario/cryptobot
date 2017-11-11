@@ -66,7 +66,7 @@ class GdaxWebsocketMock {
           resolve();
         } else {
           const tick = messages[index++];
-          debug('>>> tick:         $%d     ---     %s', tick.price, tick.time);
+          debug(`>>> tick:  (${index}/${messages.length})   $ %d     ---     %s`, tick.price, tick.time);
           ws.send(getTickString(tick), error => {
             if (error) throw new Error(error);
           });
