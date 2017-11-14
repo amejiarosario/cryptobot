@@ -59,6 +59,14 @@ describe('db (real connection to mongo)', function () {
     });
   });
 
+  describe('#getAbsoluteOhlc', () => {
+    it('should return ', done => {
+      mongo.getAbsoluteOhlc().then(results => {
+        expect(results).to.eql({});
+      })
+    });
+  });
+
 });
 
 const PRODUCT_ID = 'gdax.BTC-USD';

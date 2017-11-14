@@ -609,3 +609,63 @@ var groupByMinutes = {$group: {
 
 db.getCollection('gdax.btc-usd-ticker').aggregate([sort, limit, project], {allowDiskUse: true})
 ```
+
+
+## Map Reduce
+
+```js
+// db.getCollection('gdax.btc-usd-2-days-v2').find({})
+// var addGroupId = {$addFields: {ts:   {$mod: [{$dateToString: { format: "%Y%m%d", date: "$timestamp" }}, 3]}      }}
+// db.getCollection('gdax.btc-usd-2-days-v2').aggregate([addGroupId])
+
+
+// days
+
+// https://docs.mongodb.com/manual/reference/method/db.collection.mapReduce/
+var map = function() {
+    var d = this.timestamp;
+
+//     var month = d.getMonth()+1;
+//     var day = d.getDate();
+//     var datestring = d.getFullYear() + "" + (month < 10 ? "0" : "") + month + (day < 10 ? "0" : "") + day;
+//     var id = parseInt(datestring); // issue with the end of the months and years
+
+    var id = d.getTime()/1000/60/60/24|0; // days since epoh time (absolute)
+    var groupId = id - (id % 3);
+    emit(groupId, this)
+}
+
+var reduce = function(key, values){
+    // since sort is -1
+    var last = 0;
+    var first = values.length -1;
+
+    return {
+        timestamp: values[first].timestamp,
+        aggregated: values.length,
+        aggregatedDates: values.map(t => t.timestamp),
+        open: values[first].open,
+        close: values[last].close,
+        high: Math.max.apply(null, values.map(t => t.high)),
+        low: Math.min.apply(null, values.map(t => t.low)),
+        volume: values.reduce((sum, d) => sum + d.volume, 0),
+        bought: values.reduce((sum, d) => sum + d.bought, 0),
+        sold: values.reduce((sum, d) => sum + d.sold, 0),
+        openingTick: values[first].openingTick.time,
+        closingTick: values[last].closingTick.time
+    };
+}
+
+var output = db.getCollection('gdax.btc-usd-2-days-v2').mapReduce(map, reduce, {
+//     out: 'mapreduce',
+    out: {inline: 1},
+    sort: {timestamp: -1},
+    limit: 25,
+//     finalize: function(key, reducedValue) {reducedValue._id = key; return reducedValue;}
+});
+
+output.results
+// output
+
+// db.getCollection('mapreduce').find({})
+```
