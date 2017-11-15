@@ -622,50 +622,70 @@ db.getCollection('gdax.btc-usd-ticker').aggregate([sort, limit, project], {allow
 // days
 
 // https://docs.mongodb.com/manual/reference/method/db.collection.mapReduce/
-var map = function() {
-    var d = this.timestamp;
+var collection = db.getCollection('gdax.btc-usd-2-days-v2');
+var limit = 10;
+var multiplier = 4;
 
-//     var month = d.getMonth()+1;
-//     var day = d.getDate();
-//     var datestring = d.getFullYear() + "" + (month < 10 ? "0" : "") + month + (day < 10 ? "0" : "") + day;
-//     var id = parseInt(datestring); // issue with the end of the months and years
+ var converter = 1; //1000 / 60 / 60 / 24;
 
-    var id = d.getTime()/1000/60/60/24|0; // days since epoh time (absolute)
-    var groupId = id - (id % 3);
-    emit(groupId, this)
-}
+  // No break statements so it run all the following after a match is found
+//   switch (resolution) {
+//     case TIME.MONTHS:
+//       converter *= 4;
 
-var reduce = function(key, values){
-    // since sort is -1
+//     case TIME.WEEKS:
+//       converter *= 7;
+
+//     case TIME.DAYS:
+      converter *= 24;
+
+//     case TIME.HOURS:
+      converter *= 60;
+
+//     case TIME.MINUTES:
+      converter *= 1000 * 60;
+//   }
+
+  var mapDaysSinceEpoch = function () {
+    const d = this.timestamp;
+    const id = d.getTime() / converter | 0; // days since epoh time (absolute)
+    const groupId = id - (id % +multiplier);
+
+    emit(groupId, this);
+  }
+
+  var reduceOhlc = function (key, values) {
+    // since: sort: { timestamp: -1 },
     var last = 0;
-    var first = values.length -1;
+    var first = values.length - 1;
 
     return {
-        timestamp: values[first].timestamp,
-        aggregated: values.length,
-        aggregatedDates: values.map(t => t.timestamp),
-        open: values[first].open,
-        close: values[last].close,
-        high: Math.max.apply(null, values.map(t => t.high)),
-        low: Math.min.apply(null, values.map(t => t.low)),
-        volume: values.reduce((sum, d) => sum + d.volume, 0),
-        bought: values.reduce((sum, d) => sum + d.bought, 0),
-        sold: values.reduce((sum, d) => sum + d.sold, 0),
-        openingTick: values[first].openingTick.time,
-        closingTick: values[last].closingTick.time
+      timestamp: values[first].timestamp,
+      aggregated: values.length,
+      aggregatedDates: values.map(t => t.timestamp),
+      open: values[first].open,
+      close: values[last].close,
+      high: Math.max.apply(null, values.map(t => t.high)),
+      low: Math.min.apply(null, values.map(t => t.low)),
+      volume: values.reduce((sum, d) => sum + d.volume, 0),
+      bought: values.reduce((sum, d) => sum + d.bought, 0),
+      sold: values.reduce((sum, d) => sum + d.sold, 0),
+      count: values.reduce((sum, d) => sum + d.count, 0),
+      openingTick: values[first].openingTick.time,
+      closingTick: values[last].closingTick.time
     };
-}
+  }
 
-var output = db.getCollection('gdax.btc-usd-2-days-v2').mapReduce(map, reduce, {
-//     out: 'mapreduce',
-    out: {inline: 1},
-    sort: {timestamp: -1},
-    limit: 25,
-//     finalize: function(key, reducedValue) {reducedValue._id = key; return reducedValue;}
-});
+  var output = collection.mapReduce(mapDaysSinceEpoch, reduceOhlc, {
+      out: { inline: 1 },
+      sort: { timestamp: -1 },
+      scope: { converter, multiplier }, // pass read-only variables
+      limit: parseInt(limit) * parseInt(multiplier),
+      // include _id in results
+//       finalize: function (key, reducedValue) { reducedValue._id = key; return reducedValue; }
+    });
 
-output.results
+var results = output.results.map(r => r.value);
+results
 // output
-
-// db.getCollection('mapreduce').find({})
 ```
