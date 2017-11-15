@@ -6,7 +6,7 @@ const mongo = require('../../lib/ticker/db');
 // ENV=test mocha --watch 'test/**/*spec.js'
 // DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --recursive --watch test/e2e/{**/,}*spec.js
 
-describe('db (real connection to mongo)', function () {
+describe.only('db (real connection to mongo)', function () {
   this.timeout(1000);
 
   //before(done => {
@@ -27,7 +27,7 @@ describe('db (real connection to mongo)', function () {
         return collection.find({}).toArray();
       }).then(docs => {
         // console.log('docs', (docs));
-        expect(docs.length).to.equal(2);
+        expect(docs.length).to.equal(5);
 
         const tick = docs[0].ticks[0];
 
@@ -53,17 +53,22 @@ describe('db (real connection to mongo)', function () {
 
   });
 
-  describe('#updateAggregatedData', () =>{
+  describe('#updateAggregatedData', () => {
     it('should save data "properly"', done => {
       mongo.updateAggregatedData(PRODUCT_ID, TICKS).then(done);
     });
   });
 
   describe('#getAbsoluteOhlc', () => {
-    it('should return ', done => {
-      mongo.getAbsoluteOhlc().then(results => {
-        expect(results).to.eql({});
-      })
+
+    it('should save data and get ohlc ', async () => {
+      const saveResults = await mongo.saveTickAggregation(PRODUCT_ID, TICKS);
+      // console.log('saveResults', saveResults);
+
+      const ohlcResults = await mongo.getAbsoluteOhlc();
+      console.log('ohlcResults', ohlcResults);
+
+      expect(ohlcResults).to.eql([]);
     });
   });
 
@@ -88,7 +93,7 @@ const TICKS = [
     price: '2583.88000000',
     product_id: 'BTC-USD',
     sequence: 3510553466,
-    time: '2017-12-31T16:00:15.099000Z'
+    time: '2017-12-31T16:00:16.099000Z'
   }, {
     type: 'match',
     trade_id: 17783461,
@@ -99,6 +104,35 @@ const TICKS = [
     price: '2583.88000000',
     product_id: 'BTC-USD',
     sequence: 3510553465,
+    time: '2017-12-31T17:00:15.099000Z'
+  }, {
+    type: 'match',
+    trade_id: 17783462,
+    side: 'sell',
+    size: '0.07531000',
+    price: '6695.88000000',
+    product_id: 'BTC-USD',
+    sequence: 3510553464,
     time: '2018-01-01T16:00:15.098000Z'
+  }, {
+    type: 'match',
+    trade_id: 17783463,
+    side: 'buy',
+    size: '0.07531000',
+    price: '7302.88000000',
+    product_id: 'BTC-USD',
+    sequence: 3510553466,
+    time: '2018-01-01T17:00:15.098000Z'
+  }, {
+    type: 'match',
+    trade_id: 17783464,
+    maker_order_id: 'ced7415c-072c-4544-a0c7-f0d9d1ddac41',
+    taker_order_id: '0995570a-4e96-436b-8d7d-991e8eff3b04',
+    side: 'buy',
+    size: '0.08531000',
+    price: '8392.88000000',
+    product_id: 'BTC-USD',
+    sequence: 3510553465,
+    time: '2018-01-01T18:00:15.098000Z'
   }
 ];
