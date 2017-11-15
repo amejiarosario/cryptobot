@@ -5,6 +5,8 @@ const mongo = require('../../lib/ticker/db');
 
 // ENV=test mocha --watch 'test/**/*spec.js'
 // DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --recursive --watch test/e2e/{**/,}*spec.js
+// DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --recursive test/e2e/{**/,}*spec.js
+// ENV=test mocha --recursive test/e2e/{**/,}*spec.js # ~2s
 
 describe.only('db (real connection to mongo)', function () {
   this.timeout(1000);
