@@ -20,7 +20,7 @@ let config = {
   ticker: {
     providers: process.env.CRYBOT_TICKER_PROVIDERS || '{"gdax": ["BTC-USD", "ETH-USD", "LTC-USD"]}',
     // bufferTime (ms) - interval collecting data before saving
-    modifiers: process.env.CRYBOT_TICKER_MODIFIERS || `{"bufferTime": ${0.5 * SECONDS} }`
+    modifiers: process.env.CRYBOT_TICKER_MODIFIERS || `{"bufferTime": ${0.2 * SECONDS} }`
   },
 
   analyzer: {
