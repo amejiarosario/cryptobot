@@ -689,3 +689,18 @@ var results = output.results.map(r => r.value);
 results
 // output
 ```
+
+```sh
+# etc/cron.daily$ cat crydb-backup
+#!/bin/sh -e
+TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+
+0 3 * * * date "+%n-------%nDATE: %Y-%b-%d%nTIME: %H:%M:%S%n" >> /home/admejiar/logs/rsync.log; rsync -avzhe "ssh -p 53563" /home/admejiar/dumps/ adrian@pi.softwareeaters.com:~/dumps/ >> /home/admejiar/logs/rsync.log
+
+scp -P 53412 165.227.113.186:~/dumps/crydb-monthly.tar.gz data
+
+tar -xvf crydb-monthly.tar.gz
+
+mongorestore -d crybackup data/2017-11-18T21:56:34/crydb
+mongorestore -d crylocal data/2017-11-18T21:56:34/crydb
+```
