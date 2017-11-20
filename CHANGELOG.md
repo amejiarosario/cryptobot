@@ -27,6 +27,17 @@
   - [ ] logs db password: app/ticker.1:  crybot:db Databse:  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186:53562/crydb
   - [ ] docs has db passwords
 
+
+# 4.2.0
+
+Issues:
+x Should not do an strategy entry when there's still an unfulfill exit
+x ticker's buffer time is not working as expected in the simulation. It takes way too long to save the data
+- there's a gap in the data that cause the simulation to fail
+- no visibility: it would be nice to have a visual about what's going on. Also, helpful for reporting
+- gdax mock server doesn't return in the right format
+
+
 # 4.1.0
 
 Feat:
