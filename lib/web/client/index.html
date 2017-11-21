@@ -6,14 +6,32 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Cryptobot</title>
   <link rel="stylesheet" href="style.css">
+  <!-- <script src="http://d3js.org/d3.v4.min.js"></script> -->
+  <!-- <script src="http://techanjs.org/techan.min.js"></script> -->
+  <script src="d3/build/d3.min.js"></script>
+  <script src="d3fc/build/d3fc.min.js"></script>
 </head>
 <body>
   <h1>Hello</h1>
 
+<div style="height: 500px">
+  <d3fc-group id="chart" style="display: flex; height: 100%; width: 100%; overflow: hidden">
+    <div style="flex: 1; display: flex; flex-direction: column; padding-right: 1em">
+      <div style="flex: 1; display: flex; flex-direction: row">
+        <div style="width: 1em;">
+          <div class='vertical-text'>Price</div>
+        </div>
+        <d3fc-svg id='y-axis' style='width: 1em'></d3fc-svg>
+        <d3fc-svg id="plot-area" style="flex: 1; overflow:hidden"></d3fc-svg>
+      </div>
+      <d3fc-svg id="x-axis" style="height: 2em; margin-left: 2em"></d3fc-svg>
+    </div>
+  </d3fc-group>
+</div>
+
+
   <button>Reset</button>
 
-  <script src="http://d3js.org/d3.v4.min.js"></script>
-  <script src="http://techanjs.org/techan.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
