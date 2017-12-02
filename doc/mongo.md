@@ -697,9 +697,12 @@ TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR &
 
 0 3 * * * date "+%n-------%nDATE: %Y-%b-%d%nTIME: %H:%M:%S%n" >> /home/admejiar/logs/rsync.log; rsync -avzhe "ssh -p 53563" /home/admejiar/dumps/ adrian@pi.softwareeaters.com:~/dumps/ >> /home/admejiar/logs/rsync.log
 
+# digital ocean
 scp -P 53412 165.227.113.186:~/dumps/crydb-monthly.tar.gz data
+scp -P 53412 165.227.113.186:~/dumps/crydb-daily.tar.gz data
 
 tar -xvf crydb-monthly.tar.gz
+tar -xvf crydb-daily.tar.gz
 
 mongorestore -d crybackup data/2017-11-18T21:56:34/crydb
 mongorestore -d crylocal data/2017-11-18T21:56:34/crydb
