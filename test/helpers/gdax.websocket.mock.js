@@ -7,9 +7,10 @@ const moment = require('moment');
 const Ohlc = require('../../lib/common/ohlc-aggregator');
 
 class GdaxWebsocketMock {
-  constructor({ port = 7771, collection = {} } = {}) {
+  constructor({ port = 7771, collection = {}, delay = 500 } = {}) {
     this.collection = collection;
     this.isBusy = false;
+    this.delay = delay;
 
     this.promise = new Promise((resolve) => {
       this.wss = new WebSocket.Server({ port });
@@ -48,7 +49,7 @@ class GdaxWebsocketMock {
     if(this.collection.name) {
       this.replayFromCollection(this.collection.dateFormat).then(messages => {
         debug(`Got ticks`, messages.length);
-        return this.sendMessages(ws, messages, this.collection.delay);
+        return this.sendMessages(ws, messages, this.delay);
       }).then(() => {
         debug(`Done sending messages!!!`);
       }).catch(error => { throw new Error(error); });
