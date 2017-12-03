@@ -47,7 +47,7 @@ class GdaxWebsocketMock {
     this._ws = ws;
     if(this.collection.name) {
       this.replayFromCollection(this.collection.dateFormat).then(messages => {
-        debug(`Done getting messages!`, messages.length);
+        debug(`Got ticks`, messages.length);
         return this.sendMessages(ws, messages, this.collection.delay);
       }).then(() => {
         debug(`Done sending messages!!!`);
@@ -89,6 +89,7 @@ class GdaxWebsocketMock {
   async replayFromCollection(dateFormat = 'YYYY-MM-DD HH:00:00.000') {
     this.isBusy = true;
     debug(`Connecting to ${CONFIG.db.backup} -- ${this.collection.name} -- ${dateFormat}...`);
+    debug(`Pipeline: %o`, this.collection.pipeline);
 
     const db = await MongoClient.connect(CONFIG.db.backup);
     const collection = db.collection(this.collection.name);
@@ -97,24 +98,25 @@ class GdaxWebsocketMock {
     return new Promise(resolve => {
       const map = {};
       let lastTime = null;
-      let totalSent = 0;
+      let total = 0;
       let messages = [];
       let ohlc = new Ohlc({ format: dateFormat, cb: ticks => {
         messages = messages.concat(ticks);
-        totalSent++;
       }});
 
       cursor.forEach(doc => {
         const tick = doc.ticks;
+        // debug('tick', totalSent, tick);
         ohlc.update(tick);
+        total++;
       }, error => {
         if (error) {
           debug(`Error iterating collection ${error}`);
-          debug(`*** Total messages sent: ${totalSent}`);
+          debug(`*** Total messages sent: ${total}`);
           throw new Error(error);
         } else {
           // done
-          debug(`--- Total messages sent: ${totalSent}`);
+          debug(`--- Total messages sent: ${total}`);
           this.isBusy = false;
           db.close();
           ohlc.flush(ticks => {
