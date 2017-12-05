@@ -7,10 +7,11 @@ const moment = require('moment');
 const Ohlc = require('../../lib/common/ohlc-aggregator');
 
 class GdaxWebsocketMock {
-  constructor({ port = 7771, collection = {}, delay = 500 } = {}) {
+  constructor({ port = 7771, collection = {}, delay = 500, ticksFile } = {}) {
     this.collection = collection;
     this.isBusy = false;
     this.delay = delay;
+    this.ticksFile = ticksFile;
 
     this.promise = new Promise((resolve) => {
       this.wss = new WebSocket.Server({ port });
@@ -45,6 +46,7 @@ class GdaxWebsocketMock {
   }
 
   sendTicks(ws) {
+    debug('sendTicks');
     this._ws = ws;
     if(this.collection.name) {
       this.replayFromCollection(this.collection.dateFormat).then(messages => {
@@ -137,8 +139,11 @@ class GdaxWebsocketMock {
   }
 
   replayMarcketTicks(ws) {
-    const ticks = require('../responses/gdax.ticks');
+    const filename = this.ticksFile || 'gdax.ticks';
+    const ticks = require(`../responses/${filename}`);
     let seq = 0;
+
+    debug(`Replaying market data (${ticks.length} ticks) from <${filename}> @ ${this.delay} ms.`);
 
     this.isBusy = true;
     this.t = setInterval(() => {
@@ -147,7 +152,8 @@ class GdaxWebsocketMock {
         product_id: 'BTC-USD',
         type: 'match'
       }, ticks[seq++]));
-      // console.log('data.tick', data);
+
+      debug('data.tick', data);
 
       ws.send(JSON.stringify(data));
 
@@ -155,7 +161,7 @@ class GdaxWebsocketMock {
         clearInterval(this.t);
         this.isBusy = false;
       }
-    }, 5);
+    }, this.delay);
   }
 
   generateFakeMarketTicks(ws, products) {

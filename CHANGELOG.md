@@ -1,3 +1,46 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [Wishlist]
+### Changed
+- Replace foreman (Procfile) for [PM2](https://github.com/Unitech/pm2) with cluster management, logs and monitoring included
+
+## [Unreleased]
+
+### Added
+- Ticker data for simuation of BTC
+
+<!--
+http://keepachangelog.com/en/1.0.0/
+
+### Added
+for new features.
+
+### Changed
+for changes in existing functionality.
+
+### Deprecated
+for soon-to-be removed features.
+
+### Removed
+for now removed features.
+
+### Fixed
+for any bug fixes.
+
+### Security
+in case of vulnerabilities.
+
+## [4.2.0] - 2017-11-20
+
+[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD
+[4.2.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.1...v0.0.2
+
+--------
+
 # Commits
   🔨	`:hammer:` - Breaking change
   💡	`:bulb:` - New Feature
@@ -69,3 +112,4 @@ Bugs:
   - [x] (low) Trigger events were logged multiple times. Because it didn't remove the listener
   - [x] Heroku reloads every 24h, so triggered trailing orders are lost when the system restart. Save trigger info to DB so when the app is reloaded it has the info.
   - [x] New orders through API (HTTP) clear old ones and they still persist in the DB. Either remove old orders in DB and add new ones OR reload orders after a save happens and update trailing orders. SOLUTION: Allow status to be changed through the API and be set to cancelled
+-->
