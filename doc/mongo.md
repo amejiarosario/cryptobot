@@ -706,4 +706,7 @@ tar -xvf crydb-daily.tar.gz
 
 mongorestore -d crybackup data/2017-11-18T21:56:34/crydb
 mongorestore -d crylocal data/2017-11-18T21:56:34/crydb
+
+
+db.getCollection('gdax.btc-usd-2-days-v2').find({timestamp: {$gte: new Date("2017-11-08T00:00:00.000Z")}})
 ```
