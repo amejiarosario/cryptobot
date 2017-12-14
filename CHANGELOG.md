@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Ticker data for simuation of BTC
 
 <!--
+4.2.0
+
 http://keepachangelog.com/en/1.0.0/
 
 ### Added
@@ -69,6 +71,7 @@ in case of vulnerabilities.
   Security:
   - [ ] logs db password: app/ticker.1:  crybot:db Databse:  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186:53562/crydb
   - [ ] docs has db passwords
+  - [ ] dump-data.js has passwords
 
 
 # 4.2.0

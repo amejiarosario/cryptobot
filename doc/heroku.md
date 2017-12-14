@@ -18,7 +18,8 @@ heroku config -a crybot-web
 heroku config -a crybot
 
 # pushing code
-git push heroku master
+git push heroku master # crybot
+git push web master # crybot-web
 
 # Avoid being killed after not biding to $PORT (non-web apps)
 heroku scale web=0 worker=1
