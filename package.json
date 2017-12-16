@@ -43,7 +43,7 @@
     "we2e": "DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test mocha --recursive --watch test/e2e/{**/,}*{spec,e2e}.js",
     "ce2e": "DEBUG='crybot:*' DEBUG_DEPTH=6 NODE_TLS_REJECT_UNAUTHORIZED=0 ENV=test nyc --reporter=html --reporter=text mocha --recursive test/e2e/{**/,}*{spec,e2e}.js",
     "coverage": "nyc --reporter=html --reporter=text npm run test",
-    "simulator": "ENV=simulation DEBUG='crybot:*' DEBUG_DEPTH=6 mocha lib/simulator/*simulator.js",
+    "simulator": "lsof -i -n -P | grep LISTEN | grep 5100 | awk 'NR==1 {print $2}' | xargs kill && ps aux | grep -E 'ticker|analyzer|ticker,web,analyzer|lib/web' | grep -v grep | awk 'NR==1 {print $2}' | xargs kill -9 && ENV=simulation DEBUG='crybot:*' DEBUG_DEPTH=6 mocha lib/simulator/*simulator.js",
     "simulator-web": "ENV=simulation DEBUG='crybot:*' node lib/web"
   },
   "keywords": [],

@@ -17,6 +17,9 @@ heroku local
 heroku config -a crybot-web
 heroku config -a crybot
 
+heroku config:set DEBUG='*'
+heroku config:get DEBUG
+
 # pushing code
 git push heroku master # crybot
 git push web master # crybot-web

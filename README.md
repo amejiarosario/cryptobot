@@ -1,17 +1,30 @@
-# SECURITY RISK
-
-Fix this before this goes public!!!
-
-```sh
-# db user and pass
-cd doc/mongo.md
-```
-
 # Cryptobot
 
 :moneybag: :robot: Cryptocurrency trading bot for multiple platforms and coins (gdax/coinbase & dollar/bitcoin/ethereum/litecoin)
 
 This is a multi-currency trading bot. It's primary purpose was to automate trading cryptocurrency, however it can be use to trade forex, stocks and index funds once the API integration is available.
+
+# Architecture
+
+This program is divided in multiple modules:
+  - **Provider**: implements the provider interface to be able to talk to different market exchanges. It needs exchange API keys, ticker data websocket, REST API to create orders and get funds.
+  - **Ticker**: connects to providers (exchanges/brokers) and listen to market ticks using websockets. It receive orders through the REST API. It executes orders when price goes beyond or under certain limit. It also stores ticks/orders on DB.
+  - **Analyzer**: takes aggregated data from database and runs indicators and strategies to find entry/exit oportunities.
+  - **Simulator**: it simulates a broker and calculates profit and losses. It uses the real data from DB to replay it on *Ticker* and *Analyzer*.
+  - **Web**: api & web interface to visualize current orders, market ticks, history of profit and loss. API is used to tran
+
+You can run everything in one system. But for maximum performance, it is recommended to do the following split:
+  - Mongo: (RAM: 1 GB / 1 CPU / 20GB HDD)
+  - Ticker & RabbitMQ (RAM: 0.5 GB / 1 CPU)
+  - Analyzer: (RAM: 0.5 GB / 1 CPU)
+  - Web (RAM: 0.5 GB / 1 CPU)
+
+
+## Web
+
+We uses [Techan.js](http://techanjs.org/) (based on D3) to visualize data. The plot has the following features:
+  - Arrows: to indicate trades (buy vs sell & short & long) - http://bl.ocks.org/andredumas/3c0eefdd77a6380b1a35
+  - Zoom & Pan: see http://bl.ocks.org/andredumas/edf630690c10b89be390
 
 # Strategies
 
@@ -46,28 +59,6 @@ Trading frequency: months/years/decades
 # Technical Analysis
 
 There is a lot of indicators to choose from. You can build an strategy by combining one or more indicators and defining a entry and exit strategy.
-
-# Architecture
-
-This program is divided in multiple modules:
-  - Provider: implements the provider interface to be able to talk to providers. Basically, it needs API keys, ticker data, RESP API to create orders and get funds.
-  - Ticker: connects to providers (exchanges/brokers) and listen to market ticks. It receive orders to execute when price goes beyond or under certain limit. It also stores ticks/orders on DB. (Every time down is losing market data)
-  - Analyzer: takes aggregated data from database and runs indicators and strategies to find entry/exit oportunities.
-  - Simulator: it simulates a broker and calculates profit and losses. It uses the real data from DB to replay it on Ticker and Analyzer.
-  - Web: api & web interface to visualize current orders, market ticks, history of profit and loss. API is used to tran
-
-You can run everything in one system. But for maximum performance, it is recommended to do the following split:
-  - Mongo: (RAM: 1 GB / 1 CPU / 20GB HDD)
-  - Ticker & RabbitMQ (RAM: 0.5 GB / 1 CPU)
-  - Analyzer: (RAM: 0.5 GB / 1 CPU)
-  - Web (RAM: 0.5 GB / 1 CPU)
-
-
-## Web
-
-We uses [Techan.js](http://techanjs.org/) (based on D3) to visualize data. The plot has the following features:
-  - Arrows: to indicate trades (buy vs sell & short & long) - http://bl.ocks.org/andredumas/3c0eefdd77a6380b1a35
-  - Zoom & Pan: see http://bl.ocks.org/andredumas/edf630690c10b89be390
 
 ---
 
