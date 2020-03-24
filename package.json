@@ -27,7 +27,7 @@
     "mocha": "3.5.0",
     "nyc": "11.1.0",
     "sinon": "4.1.2",
-    "ws": "3.1.0"
+    "ws": "3.3.1"
   },
   "scripts": {
     "start": "DEBUG=crybot:* node bin/cli ticker --provider gdax:BTC-USD,ETH-USD --modifier bufferTime:60000",
