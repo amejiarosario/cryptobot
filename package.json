@@ -12,7 +12,7 @@
     "debug": "amejiarosario/debug#hide-tty-date",
     "express": "4.15.3",
     "gdax": "amejiarosario/gdax-node#heartbeat",
-    "lodash": "4.17.4",
+    "lodash": "4.17.13",
     "moment": "2.18.1",
     "mongodb": "2.2.30",
     "morgan": "1.8.2",
