@@ -20,13 +20,13 @@ let config = {
   ticker: {
     providers: process.env.CRYBOT_TICKER_PROVIDERS || '{"gdax": ["BTC-USD", "ETH-USD", "LTC-USD"]}',
     // bufferTime (ms) - interval collecting data before saving
-    modifiers: process.env.CRYBOT_TICKER_MODIFIERS || `{"bufferTime": ${0.5 * SECONDS} }`
+    modifiers: process.env.CRYBOT_TICKER_MODIFIERS || `{"bufferTime": ${0.8 * SECONDS} }`
   },
 
   analyzer: {
     // strategy: process.env.CRYBOT_ANALYZER_STRATEGY || 'weekly-close-diff',
     // interval: process.env.CRYBOT_ANALYZER_INTERVAL || 6 * HOURS
-    interval: process.env.CRYBOT_ANALYZER_INTERVAL || 0.6 * SECONDS
+    interval: process.env.CRYBOT_ANALYZER_INTERVAL || 0.99 * SECONDS
   }
 };
 

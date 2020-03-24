@@ -1,13 +1,4 @@
-# cloud mongos
-- ds151232.mlab.com:51232/heroku_2frz56zq (current)
-*   mongo ds151232.mlab.com:51232/heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp
-*   mongodb://heroku_2frz56zq:dlpne93p29659v6esqcne5unrp@ds151232.mlab.com:51232/heroku_2frz56zq
-- ds145639.mlab.com:45639/heroku_k9c7jrsc (empty)
-- 104.131.94.76:27017/crydb
-*  mongo 104.131.94.76:27017/crydb -u cryuser -p cryP@ssw0rd!
-*  mongo 104.131.94.76:27017/crydb -u crybot -p CrySkittles123
-*  mongodb://cryuser:CrySkittles123@104.131.94.76:27017/crydb
-*  mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186/crydb
+see private/mongo.md for full details.
 
 # Logs
 
@@ -30,9 +21,9 @@ db.getCollection('gdax.btc-usd-0-minutes-v1').createIndex({'timestamp':1})
 export IP='165.227.113.186'
 
 # SECURITY RISK!! If you can do this:
-mongo $IP:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 --authenticationDatabase crydb
+mongo $IP:27017 -u cryuser -p $PASSWORD --authenticationDatabase crydb
 
-mongo $IP:27017 -u adrian -p pass5356275 --authenticationDatabase admin
+mongo $IP:27017 -u adrian -p $PASSWORD --authenticationDatabase admin
 ```
 
 # Backup Database
@@ -41,24 +32,24 @@ mongo $IP:27017 -u adrian -p pass5356275 --authenticationDatabase admin
 scp root@165.227.113.186:/var/log/mongodb/mongod.log mongod.log
 
 # backup
-mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data
-mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data
+mongodump -h ds151232.mlab.com:51232 -d heroku_2frz56zq -u heroku_2frz56zq -p $PASSWORD -o data
+mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p $PASSWORD -o data
 
-mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p CrySkittles123 -o data/mongodb-512mb-nyc3-01/
+mongodump -h 104.131.94.76:27017 -d crydb -u crybot -p $PASSWORD -o data/mongodb-512mb-nyc3-01/
 mongodump --db crybot2 -o data/crybot2/
 
-mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.26/
-mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.27/
-mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o data/dumps/2017.10.28/
+mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p $PASSWORD -o data/dumps/2017.10.26/
+mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p $PASSWORD -o data/dumps/2017.10.27/
+mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p $PASSWORD -o data/dumps/2017.10.28/
 
 mongo mongodb://cryuser:pass-mongodb-1gb-nyc3-01@165.227.113.186:53562/crydb
-TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h 165.227.113.186:53562 -d crydb -u cryuser -p $PASSWORD -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
 
-TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p $PASSWORD -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
 
-TF='weekly' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+TF='weekly' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p $PASSWORD -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
 
-TF='monthly' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+TF='monthly' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p $PASSWORD -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
 
 # import backup
 mongorestore -h localhost:27017 -d crybackup2 data/heroku_2frz56zq/
@@ -72,10 +63,10 @@ mongorestore -d crybackup data/dumps/2017.10.28/
 
 ```sh
 # get data backup
-mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/btc-usd-ticker.json
-mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c eth-usd-ticker -u heroku_2frz56zq -p dlpne93p29659v6esqcne5unrp -o data/eth-usd-ticker.json
+mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c btc-usd-ticker -u heroku_2frz56zq -p $PASSWORD -o data/btc-usd-ticker.json
+mongoexport -h ds151232.mlab.com:51232 -d heroku_2frz56zq -c eth-usd-ticker -u heroku_2frz56zq -p $PASSWORD -o data/eth-usd-ticker.json
 
-# import data # mongoimport -h ds151232.mlab.com:51232 -u <user> -p <password> -d heroku_2frz56zq -c <collection> --file <input file>
+# import data # mongoimport -h ds151232.mlab.com:51232 -u <user> -p $PASSWORD -d heroku_2frz56zq -c <collection> --file <input file>
 
 mongoimport -d crybackup2 -c eth-usd-ticker --file data/eth-usd-ticker.json
 mongoimport -d crybackup2 -c gdax.eth-usd-months --file data/eth-usd-months.json
@@ -154,7 +145,7 @@ do
     for TIME in 0-minutes 1-hours 2-days 3-weeks 4-months
     do
         echo "Importing to SERVER $COIN in $TIME"
-        mongoimport -h 165.227.113.186:53562 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb -c gdax.$COIN-usd-$TIME-v2 --file data/tmp/gdax.$COIN-usd-$TIME-v2.json
+        mongoimport -h 165.227.113.186:53562 -u cryuser -p $PASSWORD -d crydb -c gdax.$COIN-usd-$TIME-v2 --file data/tmp/gdax.$COIN-usd-$TIME-v2.json
     done
 done
 
@@ -437,10 +428,10 @@ mongorestore -d crybackup3 data/crybackup2
 
 
 mongodump -d crybackup3 -o data/backups/
-mongorestore -h 165.227.113.186:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb data/backups/crybackup3/
+mongorestore -h 165.227.113.186:27017 -u cryuser -p $PASSWORD -d crydb data/backups/crybackup3/
 
 // make a final backup
-mongodump -h 165.227.113.186:27017 -u cryuser -p pass-mongodb-1gb-nyc3-01 -d crydb -o data/backups/
+mongodump -h 165.227.113.186:27017 -u cryuser -p $PASSWORD -d crydb -o data/backups/
 // load the backup locally
 mongorestore -d crybackup data/backups/crydb
 mongorestore -d crybackup /Users/admejiar/dumps/2017-11-09T16:06:55/crydb/
@@ -693,13 +684,13 @@ results
 ```sh
 # etc/cron.daily$ cat crydb-backup
 #!/bin/sh -e
-TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p pass-mongodb-1gb-nyc3-01 -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
+TF='daily' DIR='/home/admejiar/dumps' TS=$(date "+%Y-%m-%dT%H:%M:%S"); cd $DIR && mongodump -h localhost:53562 -d crydb -u cryuser -p $PASSWORD -o $TS && tar -zcvf crydb-$TF.tar.gz $TS && rm -rfv $TS
 
-0 3 * * * date "+%n-------%nDATE: %Y-%b-%d%nTIME: %H:%M:%S%n" >> /home/admejiar/logs/rsync.log; rsync -avzhe "ssh -p 53563" /home/admejiar/dumps/ adrian@pi.softwareeaters.com:~/dumps/ >> /home/admejiar/logs/rsync.log
+0 3 * * * date "+%n-------%nDATE: %Y-%b-%d%nTIME: %H:%M:%S%n" >> /home/admejiar/logs/rsync.log; rsync -avzhe "ssh -p $PASSWORD /home/admejiar/dumps/ adrian@pi.softwareeaters.com:~/dumps/ >> /home/admejiar/logs/rsync.log
 
 # digital ocean
-#scp -P 53412 165.227.113.186:~/dumps/crydb-monthly.tar.gz data
-scp -P 53412 165.227.113.186:~/dumps/crydb-daily.tar.gz data
+#scp -p $PASSWORD 165.227.113.186:~/dumps/crydb-monthly.tar.gz data
+scp -p $PASSWORD 165.227.113.186:~/dumps/crydb-daily.tar.gz data
 
 tar -xvf crydb-monthly.tar.gz
 cd data && tar -xvf crydb-daily.tar.gz && cd ..
